@@ -1,0 +1,104 @@
+--2--
+In this video, we expand our knowledge of reflection models, diving into more advanced models and concepts and how they can be implemented in our applications.
+
+--3--
+Using a GPU-based triangle renderer our reflection models were somewhat constrained by resources and compute time.
+
+With an application-based renderer, like ray tracing, we can explore more physically accurate models without those constraints. 
+
+We can now experiment with things like microfacet geometry, some advanced reflectance models and global illumination techniques.
+
+--4--
+As a review, local illumination only considers a point in the scene and the various light sources that contribute light to it. Global illumination accounts for local illumination plus other objects in the scene and how they affect the light that reaches a given point.
+
+--5--
+The shading equation takes into consideration the angle which the surface faces the light sources and scales the light contribution accordingly. 
+
+The third edition of the real time rendering text proposes an ad-hoc brightness equition that omits the ambient term similar, but is otherwise similiar to the Blinn-Phong model. I've included the equation on this slide for reference.
+
+--6--
+A bidirectional reflectivity distribution function (BRDF) represents the ratio of outgoing intensity in relation to incoming intensity. It produces a unit-less values that is typically used to scale the surface properties, for example the diffuse component of the Blinn-Phone model.
+
+BRDFs are normally simplified to treat all wavelengths equally, when in reality that is not always the case.
+
+--7--
+Even though the BRDF only examines light energy and not specifically how materials interact with light, a BRDF can be used to describe material properties.
+
+One tenet of the BRDF is Helmholtz reciprocity stating that outcoming angles are equal to incoming angles, with respect to the surface normal. 
+
+The text give examples of how BRDFs can model hemisphere lighting, specular highlights, and more.
+
+And there are many resources available on the Internet if you want to learn more.
+
+--8--
+Keep in mind that BRDFs are simplified and derived from scientific experimentation, therefore they are subject to many limiting factors.
+
+One factor is that BRDFs are isotropic and many surfaces are anisotropic. Anisotropic meeting that based on the angle in which you view a surface, the light reacts differently. For example, consider brushed aluminum patterns left by a milling machine. BRDFs treat all incoming angles equally.
+
+They are also subject to the sample population examined to derive the BRDF, and do not often consider anomolies such as the imperfections in various samples.
+
+We also apply the BRDF to an entire surface, when in reality, light may react differently at different points or patches on the surface.
+
+Then, of course, how do we represent the BRDF? We could use a mathematical function like the Phong model, or use a more statistical distribution like the Cook and Torrance model.
+
+--9--
+The specular component used in the Phone model is lacking in two important aspects with respect to the angle of incidence. One: it does not account for the intensity variations. Two: it does not account for much of how the material effects that the highlight color.
+
+Some efforts have been made over the years to account for these aspects, the most commonly used being the Cook and Torrance shading model, which accounts for the spectral composition of highlights, depending on the material type in the angle of incidence. This is especially useful when simulating the reflectance from metals and plastics. This model computes the ambient, diffuse, and specular components differently than Phong, and requires some knowledge of the materail, specifically the refraction index and the smoothness.
+
+These improvements are mainly a result of microfacets theory.
+
+--10--
+Surfaces are not perfectly smooth. There are many tiny surfaces called microfacets oriented in a variety of directions. Each microfacet is treated as a tiny, perfect mirror, even though that is not the case in reality.
+
+Microfacet theory states that a surface is represented as a distribution of the microfacet surface normals. This means that for any light reflected off of the surface, there is only a portion of the light that will be reflected in the direction of the viewer. 
+
+Each surface would have a normal distribution function to determine the amount of light reflected at any given angle.
+
+--11--
+
+Torrance and sparrow used a Gaussian distribution function while Cook and Torrance used a statistical model based on the Beckman distribution function.
+
+Most of the terms here will be familiar to you such as N and H, the surface normal in the halfway vector. The 'm' variable is new and represents some material property.
+
+For the Torrence Sparrow method, M is the standard deviation of the distribution of micro facets.
+
+For the Cook Torrance method, 'm' is the roughness of the surface with 0.2 and 0.6 as practical limits.
+
+--12--
+In addition to the distribution of facets facing the viewer, the Cook Torrance model also considers a portion of the facets that are not masked or shadowed, and the intensity of the light reflected off the facets based on the fresnel reflectance equation, which we will discuss in a few slides.
+
+All of these factors assume that the microfacets are larger than the wavelengths of the incoming light. 
+
+An example of shadowing and masking can be seen in the images on the slide. The left image shows shadowing where some facets don't receive all incoming light due to nearby facets blocking them. The right image shows masking where light reflected off the facets are blocked before reaching the viewer.
+
+--13-- 
+This shadowing or masking effect, termed interference, is really only a factor as either the light angle or viewing angle approaches the mean surface angle, or nearing perpendicular to average surface normal.
+
+The G term of the Cook Torrance model is the minimum of Gm, the portion of light not masked; Gs, the portion of light not shadowed; and 1.
+
+Blinn modelled Gm and Gs as seen on this slide. N, V, L, and H are the Normal, View, Light and Halfway vectors as defined in Blinn-Phong reflection.
+
+--14--
+The Fresnal reflectance coefficient is derived from the first principles of electro-magnetic reflection from a surface haveing index of refraction 'mu'. The formula is shown here on this slide.
+
+Given values 'c' and 'g', where 'c' is the dot product of the View and Halfway vectors, and 'g' is the square root of 'mu'-squared, minus c-squared minus 1. Since the refraction index typically varies per wavelength, this is calculated for red, green, and blue light components separately.
+
+The Fresnal reflectance coefficient influences both the specular and diffuse coefficients, which is more physically accurate and explains why many surfaces have mirror-like reflection when viewed at a grazing angle.
+
+--15--
+The final term to discuss is the glare term, denoted 1 over the dot product of the View and Normal vectors. As the angle between these vectors approached 90 degress, more and more microfacets are seen by the viewer.  Of course, this term is somewhat offset by the masking effect.
+
+--16--
+Putting it all together, we have to distribution term, multiplied by the shadow-mask term, multiplied by the Fresnal term all divided by the glare effect term. As I mentioned, this is usually computed for red, green and blue separately.
+
+The specular term is combined with the diffuse term as shown on the slide where the sum of the weights of the two terms equals one.  For metals, the weight of the diffuse term is 0 meaning that the specular component controls the entire color.  For plastics however, the color is much more diffuse than specular.
+
+--17--
+It seems that ror as many types of materials as there are in the world, there is an equal number of BRDFs to model them.
+
+Some of better-known models you will encounter are Ward's, Schlick's approximation, and HTSG.  They vary in their strengths and weaknesses, and in their complexity and efficiency.
+
+The Real-time Rendering text spends quite a few pages discussing the various types and models that have been published. There are BRDFs that also focus on different types of materials or specific features of materials.  I don't know that will ever be a single BRDF that is good and general enough to accurately model every type of surface. In the meantime, there are many BRDFs to choose from.
+
+This concludes this video.

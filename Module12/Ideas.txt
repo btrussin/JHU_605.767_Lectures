@@ -1,0 +1,14 @@
+Ideas for lectures
+
+Modern APIs
+    Vulkan
+    Metal
+
+Geometry Shading
+
+GPU-based terrain generation
+
+Noise effects, fractal terrain
+
+
+

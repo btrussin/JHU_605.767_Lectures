@@ -1,0 +1,99 @@
+--2--
+This video will discuss some of the specifics of the ray tracing algorithm. We will cover a few disparate topics, but all are useful and necessary for ray tracing.
+
+--3--
+As with most algorithms, the brute force method is often the easiest to understand and implement, but rarely the most efficient. In ray tracing, this means that we test every ray against every object in the scene, we cannot stop at the first intersection unless we're only testing to see if an intersection point is in direct line of sight of a light source.
+
+Using the brute force method, we would thoroughly exhaust the entire color of each intersection point before moving onto the next object. This means that the majority of the rays traced will be reflected and refracted rays.
+
+To make this strategy as efficient as possible, our intersection tests must be as efficient as possible.
+
+We could also be intelligent about the order in which we check for intersections to try and meet as many early out conditions as possible.
+
+--4--
+This is how your first attempt at retracing should look. In fact, your first attempt could even be a lot simpler than this. You can see in the image that this has implemented shadows specular highlights, and reflections. You could start with just computing the diffuse component then add the specular, then shadows and reflections. However, you decide to go about this I recommend an iterative approach.
+
+--5--
+Since we are working in world coordinates, you may be tempted to translate objects into world coordinates, but it is actually more efficient to translate the ray into the objects' local coordinates.
+
+You will need to translate the two components of the ray, the origin and the direction, separately to account for the different homogeneous factors.  You simply multiply each by the inverse model transformation matrix.
+
+--6--
+If the model transformation matrix has a scaling factor (or factors), this will impact the intersection distance of the ray to the object. 
+
+Since most intersection methods, assume unit length for direction vector of the ray, you will need to scale the intersection distance obtained in local coordinate space.
+
+While transforming the the ray into local coordinate space, if the direction vector is not unit length, you will need to normalize it, obviously. 
+
+The length of that transformed direction vector before normalization becomes your scaling factor for the intersection distance T and local coordinates.
+
+--7--
+These next two slides are just a review on transforming normal vectors. Remember that when transforming normal vectors from local into world coordinates using non-uniform scaling, the transformed vector can end up skewed.
+
+--8--
+The objective of the slide is to remind you that you can correctly transform normal vectors by multiplying them by the inverse transpose of the transformation matrix.
+
+We derive this by taking an arbitrary homogeneous plane on which are normal vector lies. Then if we multiply our vector by the transformation matrix, multiply by the inverse of the transformation matrix, then multiply by our plane. That gives us zero.
+
+Alternatively, any vector 'N' that is perpendicular to our normal, can be written as N times the  transpose of the inverse of the transformation, multiplied by the transformation, multiplied by our normal vectore equals zero.  Then we can rewrite this is M multiplied by our normal equals the inverse transpose of M multiplied by our perpendicular vector N. 'N' is the image of our normal in world space.
+
+--9--
+Since we are already discussing the brute force method for ray tracing, I will introduce a topic we have not yet discussed called constructive solid geometry (or CSG), which can be performed in ray tracing to render complex objects.
+
+--10--
+The basic concept of CSG is to represent objects as a combination of simpler objects, using arithmetic or boolean operations.
+
+Take, for example a cube and a cylinder. If you add these two objects together, depending on their respective sizes, of course, you can produce a box with a cylinder protruding from the center.
+
+Or, if you subtract the cylinder from the cube, you can produce a box with a hole bored through the middle.
+
+The Watt text, in chapter 2, has some additional visualizations that demonstrate the complex objects that can be created using simple geometric shapes and operations.
+
+--11--
+CSG has been used primarily in CAD systems as a modeling tool. CSG is ideal for modeling because you can quickly and easily alter models using these operations.
+
+The drawback of CSG is that it is quite inefficient to render. Typically the constructed solid geometry is converted to a mesh before rendering.
+
+However, instead of rendering to a mesh, we can use the tools of CSG in ray tracing.
+
+--12--
+Ray tracing CSG is discussed at length in the F.S. Hill text;  so if you have it, I highly recommend reading chapter 12, section 13.
+
+The technique is to cast a ray and intersect all of the objects, capturing all intersections and operations associated with their objects, then sorting the intersections based on their distance from the ray's origin. The correct intersection point is then determined using the appropriate objects and boolean operations.
+
+Take, for example, a ray intersects a cylinder and a box as shown on the image on this slide. The ray first intersects the near side to the cylinder at point A, then the near side of the box at point B than the far side of the cylinder at point C, and finally the far side of the box at point D.
+
+Depending on the associated boolean operations, the correct intersection point might be A, B or C.
+
+--13--
+I will cover two more tools before concluding this video. The first, as shown here, is the associated math to construct a ray through each pixel on the view plane.
+
+In order to do this, we need to know the width and height of the view plane in world coordinates, the near plane distance from the camera, the camera position and it view axes, and the number of rows and columns to be represented in our final image. Most of this is already stored in our camera node class.
+
+--14--
+Finally, I will discuss the concept of drawing pixel blocks. This technique allows you to see the image at a low resolution in iteratively throughout the rendering process.
+
+Instead of rendering each pixel consecutively, we can skip multiple rows and columns, and then fill in the pixels for the frame buffer based on a base pixel.
+
+For example, as a first pass, we could sample the scene at one pixel, and then use that color to fill in the next 16 rows columns without sampling. Once we've sampled the entire image, then we can render what we have so far. The next pass could then sample for every 4 rows and columns. We repeat the process until we have sample every pixel.
+
+This technique requires us to keep a list of pixels that have been computed so far so we don't recomputed a pixel unnecessarily.
+
+--15--
+You can see here are pseudocode to implement this this algorithm.
+
+
+This concludes this video.
+
+
+
+
+
+
+
+
+
+
+
+
+

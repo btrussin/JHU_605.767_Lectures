@@ -1,0 +1,147 @@
+--2--
+In this video, I will describe methods for intersecting rays with various geometric objects.
+
+--3--
+Previously, we have described the difference between implicit and explicit representations of surfaces.  We saw that the explicit forms are much more useful for modeling surfaces, which enabled us to properly render them. For intersection tests however, the implicit forms are more useful.
+
+You can see on this slide a review of the explicit and implicit forms of a sphere.
+
+--4--
+In the basic course, an exercise required us to find the intersection of a ray and a sphere and we discussed this extensively.  The easiest way to do this is by substituting the ray, using a variable 't', for a point on the sphere, that solving for 't'.  The text discusses this.
+
+--5-- 
+We can use the quadratic formula to find the correct values of 't', which correspond to the roots. We get 0, 1, or 2 roots.
+
+0 roots indicates there is no intersection of the ray and the sphere.
+1 root indicates there is only one intersection, which by nature is tangent to the sphere.
+And 2 roots indicates that the ray intersects the sphere in two places.
+
+We use the discriminant of the square root early in the algorithm to determine how many intersections there will be. That's allows us to exit early in the case of no intersections, for efficiency.  We try to avoid the square root function as much as possible.
+
+However, the discriminant does not indicate whether or not the intersection occurs in front of, or behind the ray, so this alone is not sufficient for all early out cases.
+
+--6--
+There is an optimization proposed in Eberly's text to determine if the intersection occurs behind the ray without a square root call, which is fast and will account for those early out cases.  You can see the pseudocode here.
+
+--7--
+The most optimal solution is to use some vector operations.  You see the pseudocode on this slide, and implemented solution is in the provided lab code.
+
+I suggest you thoroughly understand this algorithm such that you could reproduce it. The patterns here are employed in many intersection tests.
+
+--8--
+To test the intersection of a ray with a plane we can use simple substitution. The plane equation, shown here and discussed in the previous course can test against the ray using the variable 't'.  You just simply solve for 't'.
+
+If 't' is negative, the intersect occurs behind the ray, and can be rejected.
+
+If no intersection occurs, the denominator of the term on the right is zero, or nearly 0 in the case of precision errors.
+
+--9--
+Intersecting a ray and a cylinder is little more involved. There are three sides that you need to test against: the cylinder side and the two end caps.
+
+You can treat the cylinder as infinite, having no end caps, and substitute the ray for a point on the implicit surface. This is a similar process as solving the quadratic equation for a sphere.  This does not account for the end caps, however, but those calculations are simple enough.
+
+To account for the end caps you find if and where the ray intersects the corresponding planes, and determine if that intersection point lies within the end caps using circle calculations.
+
+--10--
+Quadrics, such as ellipsoids, paraboloids, and hyperboloids can be solved by substitution as well.  Watt's book discusses these, but you should be able to easy derive these algorithms on your own.  The math can get a little long and it's easy to miss a term of two (I'm speaking from experience), so if you attempt this, just be careful and methodic.
+
+--11--
+Determining the intersection of rays and boxes is relatively straightforward. There is a well-known slabs method, originally proposed by Kay and Kajiya that was inspired by the Cyrus Beck line-clipping algorithm. A slab is defined as an infinite space between two parallel planes, so a 3D box would have three slabs to test against.  Then some simple comparisons would indicate the nearest intersection point.
+
+Various optimizations have been proposed to the slabs method using various techniques. These generally include some simplification steps, such as projecting the ray onto the local space of the box. Some of these methods are referenced here on the slide.
+
+For an axis-aligned bounding box, the simplification is already made and the algorithm is less complex than the general slabs tests.
+
+These optimizations may be insignificant for our purposes, but are worth considering for production systems.
+
+--12--
+The slabs method is simple and described on the slide. For each slab, you will have minimum and maximum values corresponding to the ray's intersection points.  The ray does not intersect the slab if it is parallel to it.
+
+As I mentioned, comparisons of the various minimum and maximum intersection points, will determine the rays actual intersection with the box.
+
+--13--
+Here is some pseudocode for implementing the slabs method intersection test.  
+
+Note that when rejecting an intersection with a slab, due to the ray being parallel to the slab, we use an Epsilon value rather than a zero. This helps us account for precision errors.
+
+--14--
+Woo proposed some optimizations for tests against axis-aligned boxes.  First, you need only test against the front facing planes. With the assumption that all planes are front-facing, the maximum intersection value is the candidate for the actual intersection. A bounds check is necessary to determine if the candidate point actually lies on the box.
+
+--15--
+Intersecting a ray with a triangle will especially be useful for ray tracing that is introduced in the next module. I will propose two ways of doing this. 
+
+One method is to find the intersection of the ray with the plane of the triangle. 
+
+Then determine if the point is within the triangle. This is similar to finding a ray polygon intersection, which is described in a few slides.
+
+This method requires the normal of the triangle which can be pre-computed and stored or derived from the triangle points.
+
+The text mentions an optimized algorithm that tests the ray against the triangle's vertices rather than its plane, but does not go into much detail.
+
+Regardless, the barycentric coordinate method will be sufficient for our purposes.
+
+--16-- 
+Barycentric coordinates are a way of representing points within a polygon. This is a weighted representation; all inner points are combinations of the polygon's vertices.
+
+The weight of each vertex is between 0 and 1, and the sum of all weights is 1. If the weight of any coordinate is greater than 1 or less than 0, the represented point is outside of the polygon.
+
+This is especially useful for triangles where each point inside the triangle can be represented as three weight values. Furthermore, given that the sum of the weights must equal one, we can represent the coordinates as two values with the third derived from one minus the two other values.
+
+--17--
+If we substitute the ray for a point on the triangle, we can derive the barycentric coordinates of the intersection as shown in the formulas on the slide.
+
+As we are working in three dimensions, this becomes a system of three linear equations.  One equation for each dimension.
+
+--18--
+Solving a system of three linear equations is trivial. A popular method is to use Cramers substitution rule. 
+
+This method uses the determinant of the matrix, and the pseudo determinants, derived from substituting the solution into various columns of the matrix.
+
+If you are unfamiliar with Cramer's role, or do not remember it from your linear algebra studys, I recommend you look it up as a method is simple, elegant, and efficient.
+
+--19--
+You will find pseudocode for this method in the text. The solution will return the (u, v) and 't' values.  't', of course, is the distance along the ray of the intersection point. Note that this does not account for back-facing triangles.
+
+(u, v) is useful to determine other interpolated vertex attributes at the intersection point of the trianle. In GPU-accelerated rasterization the rendering pipeline did this for us, but for ray tracing, we will need to derive these values on our own.
+
+--20--
+Some objects use polygons other than triangles to represent its faces. Therefore it is useful to have a general ray-polygon intersection method for these cases.
+
+A simple way is to intersect the ray with the polygon's plane and then determine if that intersection point is inside the polygon.
+
+--21--
+It is best to simplify the problem first by projecting the polygon and intersection point onto a two dimensional plane. Of course, we must be intelligent about which plane to project onto as it will do us no good to project onto a plane orthogonal to the polygon's plane.
+
+The best target plane will give us the largest projected area. 
+
+A simple rule is to determine the largest component of the polygon's normal vector, then drop that corresponding component from all of the polygon's vertices and intersection point.
+
+--22--
+As discussed in the previous course, there are several good methods for determining whether or not a point is inside of a polygon. The crossing number method is effective and easy to implement.
+
+To do this, you create a ray from the point using any direction vector, then count the number of polygon edges that ray intersects. An odd count indicates the point originated inside the polygon. An even count indicates the point originated outside the polygon.
+
+--23--
+The text proposes an optimized solution where you translate the point and polygon such that the point is at the origin and the ray extends in the positive x direction.
+
+Edges whose vertices' y-values have the same sign (positive or negative) can be ignored as they do not cross the x-axis.
+
+And edge cases where the ray intersects a vertex can also be simplified.
+
+--24--
+Using these methods that we just discussed, we can derive an efficient alternative method for a ray-triangle intersection test, given the face normals are readily available.
+
+We can intersect the triangle's plane, reduce the triangle and intersection point to two dimensions, and then use the 2D cross product on the triangle's edges to determine if the point is inside of the triangle.
+
+--25--
+Another optimization you may consider is to use the fast inverse square root method that was implemented in the 1999 quake engine. 
+
+This method is not as accurate as the standard square root method, but is faster and usually accurate enough for ray tracing.
+
+--26--
+This image is an example of a ray tracing project, from John White in 2010. Some of the black spots are a result of the precision errors in some of the algorithm we just discussed. You may encounter similar results in your ray tracing project.
+
+The proper balance between efficiency and precision is an ongoing process and may require some trial and error.
+
+
+This concludes this video.

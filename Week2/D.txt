@@ -1,0 +1,95 @@
+--2--
+In this video, we go over reflection models, which is mostly a review with a few additions for ray tracing. We also discuss some deficiencies in ray tracing at the end of the video, along with attenuation and precision issues.
+
+--3--
+Until now, we have mostly considered the local reflection model, which is light contribution at a specfic point in the scene, ignoring objects in the scene other than the point being considered. Ray, casting is an example of this where we only consider the nearest intersecting object.
+
+In recursive retracing, we can consider a more global reflective model using reflected and refracted rays, as well as our shadow feelers to determine if an intersection point is in shadow.
+
+--4--
+The Phong reflection model is a combination of three components, ambient, diffuse, and specular, and is the standard reflection model used in most graphics systems. This is a very simplified photo realistic model, which is useful in optimized rendering pipelines, but has many limitations.
+
+Since we have more time and freedom and ray tracing, we can consider other photo-realistic reflection models to produce more accurate lighting, but at a higher computational cost.
+
+The Cook and Torrance reflection model is commonly used and produces more realistic results than the Phond reflection model.
+
+--5--
+Ambient light is the contribution of light that is not received directly from a light source. This models the light that bounces around the scene before reflecting off of the considered surface point. This is a useful component as surfaces that are not directly in line of sight of a light source would otherwise receive no light contribution.
+
+--6--
+Diffuse reflection, or Lambertian reflection is described in bi-directional reflection distribution functions as the light that hits the surface directly from a light source and is scattered in all directions.
+
+Since this only considers light received directly from the light source, any surface facing away from the light source receives no diffuse reflection contribution.
+
+--7--
+Diffuse reflection depends on the angle between the normal vector of the surface and the vector from that point to the light source. We limit this angle to 0 to 90° as a negative contribution is not physically accurate. 
+
+The diffuse component is computed differently, depending on the type of light source: directional, positional or spotlights. 
+
+Note: always remember to normalize your vectors when computing these components.
+
+--8--
+The specular component is an extension of the diffuse component in that it depends on the angle between the surface normal and the light source, but also considers the reflected vector off the surface and the vector from the point to the eye position.
+
+Specular highlights can be larger or smaller, depending on the shininess, or glossy, material property of the surface.
+
+--9--
+Rough surfaces produce larger, less intense highlights as the light is scattered in more directions. The specular component for shiny surfaces is smaller, more condensed, and brighter.
+
+Since specular highlights deal with light reflected off the surface, the color of the specular component is the color of the light source not the color of the surface material.
+
+--10--
+The two most common types of light sources are point and directional light sources. 
+
+Point light sources emit light equally in all directions. The emitted light can be attenuated and have a spotlight effect. 
+
+Directional light is a point light source at infinity. The light points in only one direction, it's constant across the entire scene.
+
+--11--
+Spotlights are point lights with a limiting cone angle. Points outside of the cone receive no contribution, and within the cone, can have an intensity dropoff the as the angle between the light's direction and the direction to the surface increases.
+
+--12--
+The local illumination equation is described here, and is the summation of all of these components computed independently.
+
+--13--
+Ray tracing adds a few global consideration to the local illumination model. 
+
+First, the local illumination is altered, and only adds the ambient component if the surface is in shadow. Second, we add the reflected and transmitted or refracted components if the surface reflects or refracts light. 
+
+The global illumination is a weighted sum of the local illumination and the reflected and refracted components. 
+
+The weights of the local and global terms depend on the material properties of the objects.
+
+--14--
+Here is the equation for the combined local and global terms.
+
+--15--
+As light bounces around the scene, the intensity decreases as more light is scattered at each intersecting object.
+
+As we back-trace our rays, the light contribution at each recursive level decreases. This is called attenuation. We can continue to recursively trace the rays until the contribution at the next level becomes zero or nearly zero.
+
+
+--16--
+While performing millions of intersection tests, we will eventually encounter precision errors. It is better to anticipate these errors rather than deal with them as encountered.
+
+One of the main issues you will encounter is what we call self shadowing. Consider, for example, a ray intersects a sphere. When you compute the intersection point, the point may lie inside the sphere, due to precision errors. If you compute your shadow feelers at that point, they will intersect the sphere, automatically producing a shadow.
+
+To account for this, I find it useful to offset that intersection point by a small factor times the surface normal to ensure that the rays originate on the outside rather than on the inside of the object.
+
+Additionally, many intersection tests compare some values to zero. Due to precision errors you may want to compare to some very small value Epsilon, rather than to zero.
+
+--17--
+There are many deficiencies to consider in our basic retracing algorithm. 
+
+Despite the realism this produces we produce, we are only modeling the major phenomena that contribute to light and material interactions. We are not considering nuanced effects, the computational complexity would be too high, or the models too complex. Two examples of what we are not considering are sub-surface scattering and caustic effects.
+
+Much of what we will be rendering may appear correct, but is physically inaccurate. This is due to our rays being infinitely thin, our materials being overly simplified, and time restrictions. We could accurately model diffuse lighting contributions by tracing millions of rays for each intersection point, but we prefer to render our images in minutes or hours rather than days or weeks.
+
+We can greatly reduce the number of rays we need to trace, but those optimizations can come later.
+
+--18--
+The real-time rendering text does not have much information on ray tracing, so I have listed a few online resources here. Of course, there are more than what I have listed here, so I encourage you to find some if you feel so inclined.
+
+If you desire to further extend your ray tracing knowledge and application, there are some texts that I reference throughout these videos, and in the course information module.
+
+This concludes this video.

@@ -1,0 +1,67 @@
+--2--
+In this video, we will discuss some general guidelines for use of color in applications, and color quantization.
+
+--3--
+The best practices used to design a good user interface are beyond the scope of this course.  Computer-human interaction or data visualization courses treat this topic well, but there are not any well-defined rules, as far as I am aware. In fact, much of this is left in the hand of artists, as their intuition seems to be better than that of most engineers.  Regardless, we will briefly mention a few generally good practices with respect to color.
+
+First, you should know that brightness and contrast are often more impactful than the colors' hues. You may even want to design in monochrome, just so you don't miss this essential aspect.
+
+The perceptual difference between colors is not equal to the numerical difference. For example, yellow and purple numerically are equally close to white. However, yellow text on a white background looks much worse than purple text on a white background. Conversely, green on black looks better than blue on black.
+
+--4--
+You should be also aware of the problems with the color blue. The eyes have difficulty focusing on blue. You have probably seen the rising in popularity of blue light glasses.  This is because the eyes have difficulty focusing on blue, causing strain. So smaller objects, like lines and dots, should probably not be blue in color.
+
+Red text on a blue background, or vice versa, causes an effect called chromostereopsis in which it appears that one color floats above another.
+
+It is also best to start with a minimum number of colors in a scene and increase gradually, making sure that you don't accidentally overdo it.
+
+Desaturated colors work well together in the foreground.
+
+If you happen work designing user interfaces, I highly recommend doing some research on the effects of color, or even better, consulting an artist.
+
+--5--
+The last topic that we were covered in this module is color quantization.
+
+It is easiest to represent images as true colors, eight bits per red, green, and blue channels. However, due to the high storage cost and the limitations of some display systems, sometimes have to reduce this to a limited number of distinct colors per image.
+
+It is not uncommon to have the need to reduce the image to the 256 best colors. This enables us to represent the image with eight bits per pixel instead of 24 bits per pixel, reducing the memory footprint by nearly 2 thirds.
+
+We will dicuss the four common methods listed on this slide.
+
+--6--
+This slide shows the loss of image quality as we reduce the number of unique colors in the image from the original down to three colors. This might not be a fair image as it is mostly orange, but you really don't notice a significant difference until you get below 100 colors.
+
+--7--
+A color block is the range of colors in the image. By nature, this forms a parallelpiped. At maximum, the color block is the entire range of red, green, and blue values. Determining the color block is often the first step in the quantization process.
+
+Quantization is highly subject to color banding, a type of aliasing with quite noticeable visual artifacts.
+
+--8--
+A naive approach to color quantization is to predetermine a color set and map true colors to the closest color in the set. Typically, you would divide up the colors evenly. This is called uniform quantization.
+
+There are various ways you can divide up the color blocks depending on the system's constraints.
+
+This is a very efficient approach, but not very effective as it does not consider the color distribution within the image.
+
+--9--
+Another relatively naïve approach is called the popularity algorithm. This approach just scans the image and finds all unique occurrences of each color. Then, it sorts the list based on the number of occurrences, and the most popular colors are chosen as your color set.
+
+A rescan of the image will then map all colors to closest color in the popular set.
+
+--10--
+Probably the best approach, visually, is the median cut algorithm. In this approach, you divide up the space evenly, essentially doing a bi-special partition, grouping colors such that each sub-block has an equal number of colors. This continues along each RGB axis until there are K sub-blocks, 'k' being the number of available unique colors for the final set.
+
+The logic for this is straightforward, but the implementaion is slightly challenging as it requires some data structures to perfom the subdivision iterations.
+
+F.S Hill's text discusses this approach and includes some pseudo code.
+
+--11--
+Another approach, also discussed in Hill's text, is the octree quantization. This approach yields an almost identical result as the median-cut algorithm, but has much better performance and requires much less memory. The algorithm is quite specific, and I highly recommend reading it if you have the opportunity.
+
+Octree quantization uses the 24-bit representation of the true color values (8 bits per channel), and constructs a tree graph based on the significant bits for each channel. Each node will have at most 8 children, and the graph will be no more than 8 levels deep. Each color is given a position in the graph as you group bit positions of each channel byte.
+
+For example, the first, most-significant, bit of each channel forms a 3-bit integer (a value from 0 to 7), and the child of the root is chosen based on that number. Then the child of that node is chosen based on the 3-bit integer of the next significant bit of the three channels, and so on.
+
+During the first pass of the algorithm, the colors in the image populate the tree nodes and the tree is constantaly being reduced such that there are no more than K colors. Reduction is performed such that children are reduced to their parent nodes, or are assigned their parent's color, so that each node representing a color has an approximately equal number of children. Or, if the node is a leaf node, the number of occurances.
+
+This concludes this video.

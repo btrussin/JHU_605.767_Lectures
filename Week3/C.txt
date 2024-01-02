@@ -1,0 +1,131 @@
+--2--
+In this video, we discuss procedural textures.
+
+We saw how much realism was added to triangle rendering when we added texture mapping, we will now do the same for our ray tracing application.
+
+--3--
+We will discuss 3D and procedural textures, getting into noise and noise sampling.  We will also discuss how texture mapping can be done in our application.
+
+--4--
+The two primary methods for adding textures to an object during ray tracing is either the mapping method similar to what we used for the pipeline renderer or a solid or 3D texture.
+
+We will discuss texture mapping in Ray Tracing later in this video. First will focus on the other texturing methods.
+
+Just like in the pipeline renderer, we can use the color returned from the texture function to either become the color at that position, this if you recall, is called the decal method, or modulate the color with the lighting received at that point on the object.
+
+--5--
+3-dimensional texturing overcomes some of the disadvantages of two dimensional texture, particularly aliasing. 3-D textures are often called solid textures because they sample a three-dimensional space to determine the texture value.
+
+A three dimensional texture is represented as a three dimensional grid of values. This is similar to the two dimensional texture grid typically stored in an image file, just in three dimensions. In fact, this is almost exactly like tri-linear texture sampling with mipmaps. The two main differences are that for 3D textures, the image layers are all the same size, and that the values at each layer are different (usually), not scaled from adjacent layer.
+
+3D textures are very useful for modelling solid materials such as marble and wood. If we were to slice a model in half, we could easily get consistent texture patterns on the interior surfaces.
+
+The memory cost of 3D texture is high, if the layers are stored in images. For this reason, most 3D textures are procedurally generated.
+
+--6--
+To procedurally generate a 3D texture, we need a function that returns a single color value for a three-dimensional coordinate. For ray tracing, we can use the intersection points of the rays with the objects to generate the color values at that point.  3D texture must smoothly interpolate over all three dimensions since we can intersect our objects anywhere on the object's surface.
+
+To sample the 3D texture for a given point on the surface of the object, we can use the local coordinate, or we can use the world coordinate, which is just the local coordinate transformed by the model matrix, or we can use some other transformation of the local coordinate.  Each produces a different effect.  Sampling with the local coordinate will give a consistent pattern regardless of the position and orientation of the object. Sampling with the world coordinate will give us a different pattern for position and orientation. If the object moves through the world, the texture pattern will update, giving an effect that the object is sort-of moving through a solid pattern.
+
+--7-- 
+Perhaps the easiest procedural texture, or at least the easiest to visualize, is a checkerboard pattern.  It is relatively easy the calculate, you can simply sum the integer portions of the incoming values, and get the modulus of that by two. If the value is even, you choose one color. If the value is odd, you choose the other color. 
+
+You can also scale the checker boxes to a specific size by dividing the incoming values by that size before truncating the values.
+
+This approach is generally good, but is subject to errors.
+For example, the checker pattern is reflected about the origin, so the pattern is interrupted if your sampling crosses the primary axes. Also, sampled values are subject to round off errors producing irregular patterns near the box edges.
+
+Better sampling logic exists, but is a little more complicated.
+
+--8--
+A wood grain texture can be modelled using a set of concentric cylinders with varying colors. The input coordinates will determine color based on the color of the smallest cylinder the input intersects.  
+
+You could model wood grain using only two oscillating colors following the formulas on this slide. Once you determine which ring your point intersects, the corresponding color is returned. The pattern is dictated by the manner in which you select the appropriate ring.
+
+Using a simple distance from the center will give you a regular pattern, but won't look very natural. If you apply a sinusoidal variance, you can produce a wobble effect that will appear more natural.
+
+
+--9--
+The wobble effect on the previous slide will appear uniform unless you apply twist factor that varies with the 'z' value. This causes the phase of the sinusoid to vary with 'z'.
+
+You can also apply a tilt function to model the grain as seen in the image on this slide. Otherwise, the grain is along primary axes.
+
+Multiple texts and online resources discuss wood grain patterns and suggest multiple variants of sampling to produce natural-looking effects.
+
+--10--
+Nature often appears in random, but recognizable patterns. To simulate this in computer graphics, we need a function that is statistically invariant for any rotation and translation, has no visible regular patterns for a given range, and can be continuously sampled, in other words, without aliasing.
+
+We define this as 3D noise. With a function of this type, we model all kinds of natural phenomena like clouds, rock, wood, and fire on a small scale, and entire world features on a large scale.
+
+--11--
+Ken Perlin defined a noise function in 1985 that has been used by most, if not all, 3D pseudo-random functions ever since. The idea is to use a 3D grid of random values, then when sampled, the 3D point interpolates over the nearby random values. The grid is called is called a lattice.
+
+As we discussed earlier, storing a 3D grid could require a lot of memory. Perlin proposed a function that sampled a one-dimensional array a random values that created the 3D grid dynamically without storing it in memory. Furthermore, Perlin's function was fast and deterministic.
+
+--12--
+The LatticeNoise function takes 3 arguments, typically a 3D point, and returns a single floating point value. The value will appear random to humans, but is very simple and regular to the computer. We can do this by scrambling the input values.
+
+To get a single floating point noise value for the input, we need to determine the nearby lattice values and perform some interpolation on them. The latticeNoise function takes three integer inputs and will map it a value in the 3D grid.
+
+
+First, we set up two arrays of equal length 'n'. One array is of random floating point values between zero and one, called a noise table, the other is an array of integer values from 0 to n minus one, called an index table. 'n' does not need to be too large. 256 or 512 is sufficient.
+
+Peachey suggests two methods to scramble the input values as shown on the slide. PERM and INDEX. The scrambling is easy to see on paper, but in practice is hard to follow. The output from the third parameter offsets the second paramerer, and that output offsets the first parameter. All this combines to give you a single index from 0 to n minus one, which is the index of the noiseTable value that we return.
+
+Got it?
+
+You may want to take some time to digest all of this before moving on, or at least come back to these slides later.
+
+The noise functionality becomes deterministic if we use the same noise and index tables. If we create these tables in a reliable manner, like using a seeded random function, then we can recreate these exact tables, or if we store them offline, then we can recreate the exact same random patterns.
+
+--13--
+Once we determine the noise values at the nearby lattice points, then we interpolate to get the value at our specific point. In this manner, noise values vary smoothly as our input values smoothly vary.
+
+Any continuous interpolation function works well for this, but typically you would use a linear interpolation, or sometimes a smooth interpolation.
+
+For 3D noise, we need to compute the 8 nearby lattice points and interpolate over them.
+
+--14--
+Examine the pseudocode for the interpolation of eight lattice points in 3 dimensions. The only two functions defined outside of this is code is latticeNoise that was defined on a previous slide, and LERP, the interpolation function.
+
+--15--
+The next few slides will show some sampling methods of the noise function that use variants of the noise function as shown here.
+
+The first variant scales the input values, the second variant scales and offsets the input values.
+
+--16--
+Lattice noise is just a base for producing the random patterns that we see in nature. The real power of noise comes in the way we sample the noise function for a given point.  We will just examine a few methods, but there are many more out on the web and it textbooks.
+
+Turbulence produces a fractal geometric effect by sampling the noise in a fluctuating pattern further from the input, but with diminishing contribution.
+
+--17--
+Turbulence can be generalized with the following formula. Each successive sample contributes smaller features to the given input.
+
+Note that the maximum 'M' in the formula should be such that any successive features are no longer visible in the result. In practice, 'M' could probably be smaller than what is derived mathematically without any noticeable reduction of quality.
+
+--18--
+You can combine multiple noise sampling methods to produce even more interesting results. 
+
+For example, if you sample the noise function using a sinusoidal input you could get one result. And if you perturb the sinusoidal function input by a turbulence output, then you can produce patterns as seen on the slide.
+
+--19--
+A marble pattern can be generated using a similar approach. Here we see the output of a of a sine function whose input values are offset by the output of a turbulence value.
+
+The sine function produces the veins, while the turbulence function produces the irregular patterns. Combined we see effects similar to what you see in nature.
+
+--20--
+Watt and Watt, in Advanced Animation and Rendering Techniques, an old but valuable book, describe a way to produce a flame effect using turbulence. The 'z' input could be used as a time value, and the x, y positions lie in color regions with different colors. The colors at a given position are perturbed by the turbulence value for that position at a given time.
+
+This can then be mapped to a rectangular polygon covering the flame.
+
+--21--
+One final slide on texturing for ray tracing. 
+
+In addition to the procedural texturing methods, we can also map precalculated textures to models just like in our rendering pipeline. You follow the same procedure of loading an image from a file, but you retain the image data in memory so that your ray tracer can sample it.
+
+Mapping points in the world to the texture can be performed in various ways. If you are drawing a sphere, you can map the spherical coordinates to the testure coordinates. If you are drawing a triangle mesh, as you draw individual triangles you can give the vertices texture coordinates then derive the barycentric coordinates and determine how much of each coordinate to apply to your point.
+
+You don't have the luxory of the GPU-based sampling for minification and magnification purposes, so you would have to write your own functions that handle the minification and magnification, as well as any other type is aliasing effects.
+
+This concluded this video.
+

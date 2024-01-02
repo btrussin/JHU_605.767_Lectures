@@ -1,0 +1,69 @@
+--2--
+The last three videos in this module will discuss color theory. Until now we have not discussed much in the way of color theory except for what we needed to get by with the red, green, and blue color space.
+
+--3--
+In this video, we will discuss gamma correction and light perception. In the next video, we will discuss different color spaces in detail. In the last video we will briefly discuss a few color usage guidelines and go into color quantization.
+
+--4--
+This image shows how color we can be used to display 3 dimensional data in a way that a viewer can extract complex information from a simple two dimensional image.
+
+--5--
+As we attempt to draw from an application to a computer monitor, color is affected at multiple points. We can define color in our applications, but that may get mapped into other values, limited values, in the framebuffer or look-up table. Then through the view controller, to the monitor, those values must be converted to a format the monitor can understand. Finally, the physical process of illuminating pixels on the monitor is subject to even more changes.
+
+There are a variety of technologies used in computer monitors ranging from cathode-ray tubes, or CRT, to liquid crystal displays, or LCDs, and light emitting diodes, or LEDs, used today.
+
+Values from the frame buffer go through a digital to analog converter, and those signals are used to illuminate the physical triads of the pixels on the displays.
+
+The final out devices' attributes vary. 
+
+--6--
+A common factor in displaying color to the monitor is what is known as gamma correction. It is convenient for us to envision color intensity changes linearly, but monitor technologies, dormally don't have linear intensity changes, as seen in the graph here. The voltage increase produces an exponential reponse.
+
+--7--
+We can correct this using a linear response curve that when added to the input, the range becomes linear.
+
+--8--
+Color theory takes into account all of the properties of light and how we ultimately perceive it. 
+
+This includes the physical properties independent to light and to material properties as well as how our human visual system interprets the light waves and intensities. At an even higher level, color theory examines the artistic interpretation that we have to light combinations and intensity changes. 
+
+We will use a lot of new terms here and explain how they relate to computer graphics.
+
+--9--
+Achromatic light means colorless light. In other words, this only examines light intensity and not the hue. 
+
+The intensity or luminance is the physical sensation of light and can be quantified with physical devices. The units used are candelas to meters squared or foot-lamberts.
+
+The term brightness refers to the perceived intensity of the light, which is subject to other factors in the environment.
+
+--10--
+Light is electromagnetic energy, of which we can only interpret a small range. 
+
+Spectral energy distribution measures the energy present at each wave length. 
+
+The dominant wavelength is known as the hue or the color that we perceive in the entire spectrum. 
+
+Excitation purity we typically call saturation, or how dominant the wave length is compared to the other wavelengths present.
+
+And luminance is the intensity of the overall lightwaves.
+
+--11--
+Saturation and hue are common terms used to describe how we perceive the light. Hue refers to a member of the color family.  Saturation refers to how strong that hue is. With stronger saturations, we view the color as more intense.  With weaker saturations, we interpret the color to be more gray-like.
+
+There are a variety of terms used to describe lightness or intensity or brightness, but they all basically mean the same thing.
+
+--12--
+About a century ago, the International Commission on Illumination (CIE) was formed to research and standardize color measurements and human color perception. Our common RGB model is a result of those efforts.
+
+Among other things, the CIE determined through experimentation that color spaces can be created using a set of XYZ primary colors. Weighted combinations of those primary colors can be used to represent any other perceivable color. 
+
+They also determined that humans are especially susceptible to small changes in the color green, and not very susceptible to changes in the color blue.
+
+--13--
+A common color space and corresponding graph, known as the chromaticity diagram, were created to represent these three dimensions of primary colors. The usable space in the graph is on a plane, so the diagram is typically viewed on an x-y plane, representing hue and saturation. 
+
+The entire spectrum necessitates the use of negative contributions of one of the dimensions, which is difficult to model in many systems. Typically a subset of the entire spectrum is used so that additive colors can be used exclusively, simplifying the color combinations. 
+
+You can see an example of a monitor color gamut in the image here. Different technologies have different ranges of colors they can represent, which lead to different color gamuts per technology.
+
+This concludes this video.
