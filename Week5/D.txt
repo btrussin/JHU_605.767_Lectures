@@ -2,5 +2,27 @@
 In this video, we discuss view frustum culling and some intersection tests needed to implement it.
 
 --3--
+Given we have already constructed a bounding volume hierachy for our scene, or at least have wrapped our geometric objects in bounding volumes, we can quickly determine if they are inside of our clip space by consctructing a view frustum object that matches the clip space in world coordinates and testing whether or not our object are inside of it.
+
+This works well if each of our objects has a bounding volume associated with it, but works even better with a BV hierarchy by testing against groups of objects. If a group is entirely inside the view frustum, we can draw the entire group knowing that every enclosed object is in view. Conversely, if the group is entirely outside, we can skip avoid the draw calls knowing the entire group will get clipped. If the group's bounding volume intersects one or more of the sides of the frustum, continue to test the children.
+
+--4--
+The full test for each bounding volume is called the exclusion/inclusion/intersection test, for obvious reasons. 
+
+While testing, it is best to err on the side of inclusion. Our applications do rather well with no view-frustum culling whatsoever, which indicates that relying on pipeline clipping is often good enough. And too many detailed collision tests could impact performance with a large number of objects.
+
+The text discusses methods of intersecting various bounding volumes with a frustum.  A common, generic method is known as the sweep method. This extends the frustum by another volume, creating a third, swept volume. With this swept volume, you can simply test it against points. See the image on the next slide.
+
+--5--
+This is taken from the textbook (figure 22.5) and shows a sphere swept line segment and square.
+
+Using the sweep method, you don't necessary store the swept volume, you just use the concept of it for intersection tests.
+
+Ericson's Real-Time Collision Detection text is an excellent resource for this method.
+
+--6--
+
+
+
 
 
