@@ -1,0 +1,74 @@
+--2--
+This last video in this module will discuss terrain generation and the Diamond-square algorithm.
+
+--3--
+Terrain generation is actually quite easy using an evenly-spaced grid pattern and surface subdivision. 
+
+This technique is actually quite versatile as you can generate a large number of polygons, control the depth of the subdivision, and easily render the terrain.
+
+If you start with a course approximation to the terrain, like a simple elevation map, or a pyramid, you can recursively subdivide the terrain into smaller sections, and offset each inner section by some random values.
+
+--4--
+To subdivide a line, the typical algorithm takes the midpoint of the line segment, adds a vertex with a small offset and reconnects the vertices. 
+
+Naturally, you would decrease the maximum randonm offset as the level of subdivision increases.
+
+--5--
+Instead of random values obtained from a psuedo-random number generator, you could use smoother values for your subdivision offsets. A gaussian distribution is a common choice, scaled by a roughness factor. 
+
+A fractal approach, like the power spectral density function seen here, will perturb the values in a controlled fashion. Brownian motion, which is a commonly used distribution, uses this denstity function with beta equals 2.
+
+A table of values is shown at the bottom with various beta values. If the fractal dimension is larger, the terrain appears rocky, where lower dimenstions appear flatter.
+
+--6--
+Here is an image of some simple terrain coupled with fog.
+
+--7--
+This and the image on the next slide are good examples of some generated terrains. The links are no longer active and I cannot find them online anymore to credit them, but I left them here for reference.
+
+--8--
+[no audio]
+
+--9--
+Fractal terrain subdivision is a simplified algorithm compared to a general surface subdivision algorithm. Since terrain is not a closed mesh, we don't need to adjust the vertices to smooth the surface.
+
+You can divide each edge in half, generating a new vertex at each midpoint. Theses midpoints can be offset by your random values along the normal vector of the triangle.
+
+There are two major considerations when offsetting the new vertices: internal consistency and external consistency.
+
+--10--
+Internal consistency means that the shape of the polygons should not be altered with regard to scale, viewing angle, subdivision level, etc.
+
+This requires the application to either retain the random offset, or have the random number be deterministic.  There are multiple ways to do this, or course, each with varying degrees of complexity. These include mapping the random numbers to their appropriate vertices in some way.
+
+The easiest method, in my opinion, is to save each level of subdivision, but the memory requirements can get quite large.
+
+--11--
+External consistency refers, in part, to the surface subdivision issues I mentioned earlier with cracking and tearing in the mesh. Shared edges need to be consistent with their displacement of the midpoints, which means that two normal vectors must be accounted for, and the offset should be the same.
+
+Multiple stategies can be applied to this as well, some of which are listed here.
+
+--12--
+Creases in the terrain are a common problem as they can be quite jarring to the viewer. These are a result of the original course mesh and the fact that we don't do any smoothing of the mesh after subdividing. Fog does help to mitigate the effect.
+
+While moving the camera along the surface and the terrain is being updated can lead to a bubbling effect, where the viewer sees the terrain being updated.
+
+There is an algorithm that is quite effective using a height map and a geometry shader that I think many large terrain maps use today. It follows some of the concepts of subdividing surfaces, but it's not as dynamic.  It's worth the read if you are interested. The link is at the bottom of the slide.
+
+--13--
+The diamond square fractal terrain algorithm is a simple approach, but is not really dynamic. To implement this, you create a grid of heights and join the vertices to create the mesh. You can use random or fixed values at the corners, and maybe some interior points as well, then the rest of the heights are filled in using an average of the four computed corners and a random offset.  The offsets decrease as the grid gets finer.
+
+This approach isn't bad, but the memory footprint is extremely large for larger terrains.
+
+--14--
+View dependent terrains draw more polygons closer to the viewer than farther away. 
+
+--15--
+Terrain data usually consists of a regular height grid. And terrains typically need to merge with other data like textures, models, and even feed into other systems, all while maintaining high frame rates. There is considerable reseach into improving these capabilities.
+
+Many applications, especially those with large world maps like flight simulators, need to accurately render terrain at a considerable distance. One way to render detailed terrain while maintaining high frame rates is to perform some view-dependent rendering. This aims to render lower-detailed polygons far from the camera.  There are several methods for this, one of which is to keep height maps of multiple levels of detail.  For example, a high detail grid could be spaced every 10 meters, and a low detail grid could be spaced every 100 meters.  This, of course increases memory requirements, and must account for tearing and stitching of the terrain when transitioning from one level of detail to another.
+
+--16--
+Here is a list of some software packages and other resources for terrain generation.
+
+This concludes this video.

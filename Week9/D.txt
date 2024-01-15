@@ -1,0 +1,30 @@
+--2--
+In this video we discuss material mapping and alpha mapping.
+
+--3--
+We have established that lighting calculations are expensive and are best done per pixel. We have also talked about passing the diffuse calculation to the vertex shader and just interpolating that value for use in the fragment shader. However, we know that can't be optimized for the specular component. Another optimization could be to pre-process these values and store them in texture maps.
+
+We could combine the ambient, diffuse and base color into a single texture, if that's possible for the object.
+
+It is common to compute the specular component, the most expensive shading component, into a texture.  This is referred to as gloss map.
+
+--4--
+Another use of a gloss map allows us to define varying material properties across surfaces of an object. The shininess of an object may not be uniform. We could assign a single floating point value per texel for the approprite shininess and store it as a gray-scale, or single-channel, image file.
+
+We could then access that texture while rendering to apply the level or shine at that texel.
+
+For example, a zero value could contribute no specular component, and a one could contribute the full specular component.
+
+--5--
+Alpha mapping is an extension of material mapping where we can apply transparency to different parts of the texture. This is often used for decaling and two-dimensional sprites.
+
+Using this technique, we can get what we call a cut out where we represent a complex object in an image that looks like a model from a distance. We use this in billboarding, which we will explain later.
+
+We can even blend alpha and textures animations to create interesting effects like flickering torches, explosions, and so forth.
+
+--6--
+Loading and using images with a single channel is easy enough. STB supports this if you load the image using STBI_grey.
+
+You can see the fragment shader snippet at the bottom of how to use a texture of this format.
+
+This concludes this video.

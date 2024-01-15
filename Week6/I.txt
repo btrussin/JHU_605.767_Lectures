@@ -1,0 +1,35 @@
+--2--
+We conclude this module discussing some of the common uses for parametric curves and surfaces in computer graphics applications.
+
+--3--
+Of course, the primary use of parametric curves is in modeling. We already mentioned that Bezier curves were created for use in modeling car bodies, and how useful curves are in CAD programs. The ability to quickly create or modify a surface makes curves particularly useful for modelers.
+
+Curves have also been used to in data analysis and data modeling. 
+
+--4--
+In data modeling, if a curve or spline can be used to represent the data, then the data can be stored and altered as easily as geometric data.
+
+In animation, curves produce fluid motion. Key frames, a set of discrete animation positions and orientations can be represented as control points, or splint knots, representing an animation sequence with very little information.
+
+And curves are often used for interpolation porposes.
+
+--5--
+It is sometimes desireable to represent a set of data points as curves. This can be useful when either the data set is too large, or if the intent is to identify patterns in the data. This is similar in concept to statistical regression analysis.
+
+This can be done by creating network of splines or curves through data points that are close together using spline interpolation techniques.
+
+The set can then be broken up into segments and represented as Bezier curves or patches.
+
+--6--
+Sweep representations is a modelling technique where a geometric object is created by following another geometric object along a path and vertices are created by taking regular samples of that geometric object. We did this in the basic course with a surface of revolution.  
+
+We could extend the same surface of revolution to use a curve instead of a set or points. The same principles apply, and a curve enables us to create more or less dense mesh as needed or desired. For example, this can be used to create models of varying levels of detail.
+
+This technique can be used in many more ways and curve representations open up many complex and interesting possibilities.
+
+--7--
+Sculpting is a form of 3D modeling patterned after an artist working with clay. This feature is found in modern modeling software packages and allows artists to create model in free form.
+
+Manipulating individual vertices of an object may be necessary occassionally, but large groups of vertices can be moved if the vertices are derived from splines. The artist can make subtle, or even large changes to control point, knots, or weights to achieve a higher degree of manipulation.  
+
+This concludes this video.

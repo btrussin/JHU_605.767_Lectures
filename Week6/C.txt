@@ -1,0 +1,44 @@
+--2--
+In this video we will discuss bezier curves and the advantages of cubic curves, in general.
+
+--3--
+Some curves, such as Bezier curves, allow any number of control points.  A large number of control points increases in cost and complexity, of course. It turns out that 4 control points tends to be the magic number as more than that does not add enough value for the cost. And with 4 control points, we can define a curve that takes advantage of all 3 dimensions, as 3 or less control points confines us to a single plane.
+
+In addition, 4 control points gives us a polynomial of the third degree which, if multiple are joined together, we can achieve C2 continuity.
+
+--4--
+Hermite curves are simple and easy to control.  They are defined using two end points and a tangent at each end point.
+
+A cubic interpolation can be applied for t-values between zero and one, as shown here on the slide.
+
+These are very similar to Bezier curves with 4 control points, which we will see on the next slide, but I think that Bezier curves are more intuitive.
+
+--5--
+Bezier curves can be defined for any number of control points, but typically use 3 or 4, including the end points. The image on the right shows a cubic curve, with 4 control points, where p-0 ane p-3 are the start and end points respectively.
+
+The basis function for each point is the bernstein polynomial for i of n-minus-1 where 'n' is the total number of control points.
+
+I refer you to the text for a full description of a general Bezier curve with n control points, and there are also many good resources on the web. Cubic bezier curves are very common.
+
+--6--
+Bezier curves can be expressed with matrix multiplication using the basis matrix derived from the Berstein polynomials and samples of t to the 3rd power down to t to the zero power.
+
+Pre multiplying and storing TM for a series of t values from 0 to 1 could quickly give you vectors that the dot product of it and the various components of the control points can compute curve values very quickly.
+
+With only the control points to worry about, this representation makes cubic Bezier curves versatile and efficient.
+
+--7--
+Joining a series of cubic Bezier curves is a matter of making sure the end point of the previous curve is the start of the next curve. This allows for long, complex curves.
+
+You can obtain G1 continuity by making sure the last two control points of one curve align linearly with the first two control points of the next. And C1 continuity if the distances are correctly sized.
+
+That G1 or C1 continuity constraint makes joined, complex curve manipulation somewhat difficult, but manageable. This gets a little easier if you increase the degree of the bezier curve, say to 5 control points instead of 4.
+
+--8--
+Listed here are properties of Bezier curves including some of the limitations. 
+
+The biggest limitation of Bezier curves, in my opinion, is the fact that local changes to the curve are not possible, as any change to a control point affects the entire curve.
+
+Still, the simplicity and verstility of Bezier curves makes them ideal for use in modeling, animation, and many other features in computer graphics.
+
+This concludes this video.

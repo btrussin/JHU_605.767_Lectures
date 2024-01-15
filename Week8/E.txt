@@ -1,0 +1,101 @@
+--2--
+In this video, we discussed shadow maps. For many reasons which will become apparent, shadow mapping is the technique of choice for generating shadows in real time.
+
+--3--
+Also developed in the 1970s the shadow mapping algorithm takes advantage of the depth or Z buffer algorithm, but from the viewpoint of a light source. This algorithm operates in image space, and requires no knowledge of the global scene geometry.
+
+This is the most commonly used shadow rendering technique and is even used in high profile software packages, like Pixar's RenderMan. Watt and Watt discuss this in their Advanced Animation and Rendering Techniques book. Real-time Rendering also give this topic excellent treatment.
+
+--4--
+This requires multiple passes. The first pass, or passes, create shadow maps, which are depth maps, from the viewpoint of the light source. You render the scene using the light source as the view reference point, but do not render to the framebuffer, rather to a framebuffer object that can be later used as a reference texture. Since we are only interested in the depth, we do not calculate any lighting or color.
+
+This means that a projection matrix must be created for each light source. A directional light requires an orthographic projection, whereas a positional light requires a perspective projection.
+
+--5--
+In the second pass, the scene is rendered normally.
+
+In the fragment shader to determine whether a fragment receives direct light or not from a light source, we need to transform that fragment back into world space, and then into the light source space. So, we need to provide a transformation for each shadow map. 
+
+This will give us x-y-and Z prime values that are in the light space. The x-prime and y-prime values are used to sample the shadow map texture, which returns a floating point value for the closest depth at that sample to the light source. That depth is compared to z-prime, the depth of the current fragment with respect to the light source.  If the current depth is greater than the sampled depth, the fragment is in shadow, otherwise it receives full lighting from the light source.
+
+Since these multiple transformation are highly subject to floating point error, the z-prime value may equal the sampled depth, and incorrectly shadow itself. We will dicuss solutions to this in a few slides.
+
+--6--
+Shadow maps function reasonably well, but do you have their drawbacks.
+
+Of course, a shadow map must be created for every light source, greatly increasing our footprint in texture memory on the GPU. This also requires transformations for each fragment in the fragment shader, which may even be overwritten by a later fragment in the framebuffer.
+
+Also, shadow mapping is subject to aliasing, as with any texture sampling technique. This could be mitigated with higher resolution shadow maps, but that comes at a higher cost. We could perform some interpolation when sampling the shadow maps, but that is expensive, and may not even give us correct results.
+
+--7--
+This image is a good visual of what is going on in the shadow map process.
+
+You can see the depth map near the light source. The scene is rendered using the light source as the view reference point onto this image plane. Objects A and B are projected onto the same coordinates of the image plane, but only the depth values of A are stored.
+
+Then, when the scene is rendering object B, BR is transformed into image space and the depth values are compared. Since the depth of the fragments of object B are greater than the depth of object A in the image plane object B is considered to be in shadow and will not receive direct light contribution from the light source.
+
+--8--
+You can see the power of shadow mapping with the two images here. No shadow mapping is happening in the left image, obviously. Note the shadows even on curved surfaces in the image on the right.
+
+No diffuse components or specular highlights appear in the shadowed regions.
+
+--9--
+These images show the effect of self-shadowing. These artifacts can be prevented by using a polygon offset when computing the shadow maps with a small bias. Too mush bias will also have negative effects.
+
+An alternative to using polygon offset is to render only the back-facing polygons when creating the shadow maps, but that only works for closed polyhedra.
+
+--10--
+There is plenty of support for shadow mapping in current hardware and graphics libraries.
+
+There used to be some specific extensions to OpenGL for shadow mapping, but those have been replaced with later features that added general support that accomplish the same functions. 
+
+The first is a frame buffer object which enables the pipeline to render to a specific buffer, instead of the default framebuffer that gets sent to the display. Then, you can create a depth texture as seen on this slide. Finally, you associate the framebuffer to the texture memory. There must be a framebuffer object with associate depth texture memory for each shadow map you wish to create.
+
+--11--
+To create the shadow depth map, you can follow the steps outlined here.
+
+The framebuffer object and associated depth texture must be set up for each shadow map as outlined on the previous slide. Note this is only performed once. The framebuffer object can be reused every time the shadow map needs to be updated.
+
+Before rendering the scene, you should enable depth testing and set a polygon offset.
+
+And of course, the light projection transformation is used instead of the camera's view projection.
+
+Finally, you bind the framebuffer object as your target framebuffer and render the scene.
+
+--12--
+After the shadow maps have been generated, you can render the scene normally from the view reference point.
+
+Make the shadow map textures and light projection matrices available in the fragment shader. Multiply the fragment position by the inverse of the view projection matris multiplied by the light projection matric to get the homogeneous coordinates in light space.
+
+Sample the shadow map using the x-prime,y-prime values to get the minimum light source depth and compare that the z-prime value to determine if the fragment is shadowed or not. Then perform lighting calculations accordingly.
+
+You may find the link I provided on the slide helpful.
+
+--13--
+The shadow mapping we have just discussed produces hard shadows, but there is a simple extension that could be used to compute pseudo-soft shadows called percentage closer filtering.
+
+This is similar to the concept of magnification in texture filtering, but we obviously do not want to interpolate depth values. Instead, we find nearby, texel and get discreet depth samples from each one. Then we can use those values to scale the light contribution. I have provided several links that explain this and the text also goes into detail.
+
+Another method to compute soft shadows is called variance shadow maps. This uses two shadow maps per light source, one for the depth, and the other for depth squared. Mip maps prefiltering can also be done the shadow map textures.
+
+The shadow or light contribution is then scaled by the distance from the fragment to the minimum depth in the shadow map. The link provided here and the text both explain this method.
+
+--14--
+There is support for shadow maps in GLSL. The links here are good resources.
+
+The functionality is similar to the other texture sampling we have already done.
+
+--15--
+Listed here are some of the issues with shadow mapping.
+
+The most-addressed problem is with aliasing artifacts, but there are many published techniques to account for this, including the filtering techniques we discussed. Others include multiple maps at varying resolutions to account for distances from the view reference point.
+
+We also discussed the depth of bias that can be addressed with the polygon, offset or rendering only back faces onto the shadow map.
+
+Obvious concerns are with the additional memory requirements and render passes.
+
+Finally, there are cases where light sources are in the middle of the scene and not all object are projected into its space, and objects get extremely close to the light sources and the near and far planes of the light space suffers from precision problems.
+
+All these may need to be accounted for in the applications that use shadow mapping.
+
+This concludes this video.

@@ -1,0 +1,38 @@
+--2--
+In this video we discuss non-uniform rations b-splines, which improve upon the B-splines covered in the previous video, and also briefly discuss other types of splines.
+
+--3--
+The B-splines that we discussed in the previous video assumed even knot intervals. We will now relax that assumption with non-uniform knot intervals, even repeating knot values. Keep in mind that repeated knot values does reduce the level of continuity at points of the curve influenced by that knot.
+
+Non-uniform B-splines do look very similar to uniform B-splines, and even use the recursive blending funtion from the previous video.
+
+--4--
+Rational splines extend the blending function function using by weights added to each control point. Each control point contribution on the curve is then proportional to the weight of all of the control points.
+
+This then introduces a very commonly-used type of curve the non-uniform rational B-spline, or NURBS.
+
+--5--
+NURBS then provide the most versatile type of curve that we have discussed this far. The weights added to control points can pull the curve towards it, or push the curve away from it, without loosing continuity.
+
+Exact shapes can be represented using NURBS, including other parametic curves like cirles and Bezier curves, make them ideal for general use in applications.
+
+--6--
+Here are some examples of how NURBS can be used to represent various conic section using three control points, know vector as shown, and different weights for the middle control point.
+
+--7--
+There are other types of splines, but they don't get nearly as much attention as the types we have just discussed.
+
+Two that may be worth researching are the Kochanek-Bartels splines and Catmull-Rom splines.
+
+Kochanek-Bartels splines extend cubic Hermite splines, which are already easy to understand and use.
+
+And Catmull-Rom splines pass through the control points, a feature we have not offered in any of the other splines we covered.
+
+--8--
+We mentioned that B-splines are a generalization of Bezier curves. Cubic uniform B-splines can be rendered using Bezier curves.  This is desireable because Bezier curves can be rendered very efficiently.
+
+Listed here is the transformation from Uniform Cubic B-splines to Cubic Bezier curves, and vice versa.
+
+Non-uniform B-splines are not as easily transformed.
+
+This concludes this video.

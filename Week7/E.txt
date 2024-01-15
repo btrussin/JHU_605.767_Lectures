@@ -1,0 +1,50 @@
+--2--
+In this video we discuss particle systems.  This is just for review, since we already discussed particle systems in the basic course. I don't think I add much new information here.
+
+--3--
+This is an interesting side-by-side of a photograph of a splash, and an animated splash using particle systems.
+
+--4--
+This is from an animation project that I can no longer find online, but is a good representation of the many, many parameters that go into robust partile system generator. This just indicates the diverse effects that can be generated using these techniques.
+
+--5--
+Particle systems were first described by William Reeves from Lucas Films in 1983. He developed and used the first particle system for the Genesis bomb effective in Star Trek II: The Wrath of Khan. The effect was a moving wall of fire over the surface of a planet.
+
+Particle systems are unique in that an object is represented as a set, or cloud, of elementary particles. There is no surface representation, so there is no triangle mesh to approximate the surface.
+
+Individual particles are born, move and devolve, and then die. Each individual particle is represented by a simple primitive or geometry shape. They are most often represented as points or point sprites, but can be represented with lines, boxes, and even spheres. Since most particle systems usually have hundreds or thousands of particles active at any one time, simpler primitives like points and point sprites are most efficient.
+
+Various attributes of the particle can also change over time, things like color or brightness, size, and transparency. Individual particles generally have some randomness to their initial velocity and attributes, and once they are born, they often use physical forces like gravity and such to apply realistic movement to each individual particle.
+
+--6--
+There are many examples of particle systems that you can find on the web. A couple of examples listed here illustrate some of the features of a particle system.
+
+Imagine modeling fireworks. A rocket is fired upwards and at some point there is an initial explosion. Particles are born and travel radially outward from the center of the point of explosion; it would probably give them random initial velocities. As the particles move, the effects of gravity start to take effect and the particles begin to fall towards the ground. They also change color and get dimmer and eventually die. Meanwhile, the initial rocket may continue and secondary explosions may occur.
+
+The flow of water in a fountain or waterfall is another example. Many water particles may flow together as they fall from a waterfall. They might have slightly different trajectories and some may be deflected by obstacles as they fall. When they hit the ground, they splash and may be deflected upwards.
+
+Many other examples like modeling flames, fire, smoke, clouds, and other natural phenomena exist.
+
+--7--
+This slide presents some on-line examples. Any search should find examples in case these pages no longer exist. There are also many YouTube videos that demonstrate different particle systems.
+
+--8--
+Particle systems have even been extended to model more complex behaviors like flocking of birds. Some effects like modeling crowds of people in movies can also be achieved using particle systems.
+
+--9--
+To implement a particle system within the scene graph, you can use a special node type that handles the entire set of particles. Maintaining individual scene nodes for each particle and its attributes and transforms would be very expensive.
+
+Using a single scene node to set the initial conditions of particles, load the VBO with points sprites, and to contain logic to draw the set of particles from the VBO might be the best approach. 
+
+An Update method could then update particle positions and attributes and create new particles as needed and remove ones that die. The Update method could also update the VBO.
+
+There may also be a need for a separate shader to handle the particles. You likely do not want to perform complex lighting on a large set of particles, so you might simplify any lighting computations. You might also use glPointCoord to modulate color and transparency for within a point sprite.
+
+--10--
+Particle systems are usually best drawn after the rest of the scene has been drawn to get the correct translucency. Make sure your blending is enabled and also correct. You may need to consider different blending functions to get the desired effect.
+
+Another thing to remember is that you usually want to disable writing to the depth buffer while rendering particles, but still have depth-testing enabled. This will remove particles that are behind opaque objects in the scene, but not obscure other particles.
+
+One of the powerful aspects of particle systems is that there are many possibilities and many different approaches that can be used to create a wide variety of effects. However, getting the system to do exactly what you want it to do is as much art as it is science.
+
+This concludes this video.

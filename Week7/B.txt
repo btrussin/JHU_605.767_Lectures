@@ -1,0 +1,32 @@
+--2--
+Here we will discuss some advanced curved surfaces.
+
+--3--
+The types of objects depicted in the images here may look familiar to you. These are called by various names including implicit surfaces, blobby objects, and metaballs.
+
+--4--
+Implicit surfaces are functions where the surfaces are defined at f of p equals zero.  The sphere equation is a common example.
+
+We have already established that the implicit form is not useful to generate mesh objects, but a technique called isosurfaces does benefit from implicit forms.
+
+An isosurface is a 3D data set of samples where values at each sample can be considered either inside or outside of the object.
+
+Given a set of samples, geometry can be created and rendered and this can be used to model somewhat abstract shapes like water droplets and molecules. Depending on the distance between the samples, distinct sections are rendered separate when far apart, but are blended together when sufficiently close.
+
+Implicit surfaces are commonly supported as some good rendering techniques are well-established.
+
+--5--
+Blobby objects are density functions with a center and radius, or a combination of other parameters.  
+
+Regardless of the function or functions, a set of blobby objects can be sampled to populate a 3-dimensional space.  
+
+Metaballs are a common type of blobby object defined using the functions on this slide.
+
+--6--
+The marching cubes algorithm is probably the most common method for rendering an isosurface. This requires a 3-dimensional grid of values, each value indicating if the data point is inside or outside of the surface.
+
+Each grid cell has 8 corners, meaning that each cell fits one of 256 cases. Edges with endpoints that are both inside or outside of the surface are ignored. Edges with endpoints where one is on the inside, the other on the outside, are used to create triangle vertices for rendering.
+
+This algorithm takes some time to setup, but once the work is done, it can render isosurfaces in real time.  I highly recommend looking up some resources on marching cubes.  There are many good explanations including the wikipedia article.
+
+This concludes this video.

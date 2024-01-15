@@ -1,0 +1,104 @@
+--2--
+In this module, we review the texture mapping methods we covered in the previous course, and then go into some advanced texture mapping topics that we may have only mentioned until now.
+
+This video and the next are just for review. There are a lot of slides, mostly for reference, and I will go through them very quickly.
+
+--3--
+Here are the review topics we will cover in this video and the next. We will just discuss principles in this video.  The next will cover implementation details using OpenGL.
+
+--4--
+Here are some examples of texture mapping.
+
+--5--
+Texture mapping replaces vertex and fragment properties with data from images. Images can be procedurally generated or stored in an image file.
+
+Multiple properties can be replaced or augmented using texture data, the most obvious being pixel color values.
+
+--6--
+Textures are used to represent surface detail that is typically too dense to be efficiently stored in vertex data.
+
+Textures are used in everything from satellite imagery to tree billboards to point sprites.
+
+--7--
+You can see from the images here the visual cues added with simple texures mapped onto a few quadrilaterals.
+
+--8--
+Here is an example of complex terrain data captured from satellite imagery.
+
+--9--
+Additional uses for textures, some of which we will discuss in this module, are reflections, animations, lightmaps and shadows.
+
+--10--
+Image and texture data can be used to store more than just color data. Texture images can store normal vectors, transparency, specular hightlights, and so on. You are only limited by image storage requirements.
+
+--11--
+The most common texture maps are 2-dimensional. 
+
+Texture elements are called texels, short for texture pixels.  And texture space is typically given the coordinate system s,t or u,v, both dimenstions with ranges zero to one. 
+
+--12--
+Textures are usually generated from image data, stored in image files, like jpeg, png, etc.  Images are created in a variety of ways including digital cameras, image manipulation programs, or even from framebuffer objects, which we have already seen with shadow mapping, and we will see again with environment mapping.
+
+Textures can also be generated procedurally, like we did with ray tracing.
+
+--13--
+In order to use texture data with our geometric objects, we must map vertices to positions in texture space.
+
+Legacy OpenGL had a way to do this in the fixed function pipeline, but we pass them to the vertex shader as vertex attributes.
+
+--14--
+There are multiple standard ways to map vertices to texture space. And even though texture space is from 0 to 1 in both dimensions, we can map to coordinates beyond that range and take advantage of the repeating or clamping feature.
+
+--15--
+Scale matters when mapping deriving correct texture coordinates. The example here shows how a simple quad can show either of portion of a wall, or what looks like an entire wall, just by altering the texture coordinates.
+
+--16--
+Cylindrical mapping wraps quads around the cylinder.  The rotation from zero to 2-pi is scaled to zero-to-one in the s dimension, and the the cylinder height maps to the t dimension.
+
+--17--
+Spherical mapping is similar to cylindrical mapping in the s dimension, but rotates from 0 to pi, like latitude, in the t dimension.
+
+--18--
+Shrink wrapping is useful because it can apply to many other types of models. The s-dimension is rotated just like cylindrical mapping, and the t-dimension can be mapped also like a cylinder, or by intersecting a ray from the object center.
+
+--19--
+As we render texture-mapped geometry, we pass the texture coordinates as vertex attributes. We interpolate the texture coordiates using perspective correct, or smooth, interpolation.
+
+Texture mapping is highly subject to aliasing.
+
+--20--
+You can see with the checker pattern in the background just how badly the aliasing problem can be with texture mappint.
+
+Sampling and interpolating texture values helps to mitigate these negative effects.
+
+--21--
+The most aggregious aliasing artifacts are a result of undersampling. This is when the fragment covers a large number of texels, and choosing just one texel out of many poorly represents the entire area.
+
+--22--
+Prefiltering the texture, particularly mip-maps, has proven to be the best overall anti-aliasing technique.
+
+This does increase the texture's memory footprint, but not significantly, as you can see here.
+
+--23--
+A good representation of the mip-mapped images.
+
+--24--
+Both the creation and choosing of mip-map levels is performed using OpenGL, or another graphics library, and the hardware. However, this can be done by the application. Some details outlining choosing the best mip-map level is presented here.
+
+--25--
+The base level of the mip-map, normally the original texture image, is level zero. Each subsequent level increases the level index and is half the width and height of the level directly above it. 
+
+Pipeline configurations enable the sampling in-between mip-map levels.
+
+--26--
+Here is the image from earlier, along with the same texture with mip-mapping.  Mip-mapping tends to overblur the texture color, but the artifact in the background has been fixed.
+
+--27--
+Mip-mapping is not perfect, but has many more advantages than disadvantages, and has support on many systems and in many graphics APIs.
+
+Some other filtering methods are also listed here.
+
+--28--
+Rip-maps do much more prefiltering than mip-maps, storing uneven scales of the image that can produce a much better sampling at certain viewing angles. However, the storage cost is high, and this does not have much hardward support.
+
+This concludes this video.

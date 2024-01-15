@@ -1,0 +1,30 @@
+--2--
+In this video we briefly discuss light maps
+
+--3--
+A large scale scene rendered using light maps. A good approach, especially for real-time interaction, but not perfect.  You can see of the shadow aliasing at the ground level.
+
+--4--
+Lighting and shading is expensive, as we know, Many attempts have been made to accelerate and optimize this process over the years. One proposed method is to pre-calculate the lighting and store it for rapid access in texture maps.
+
+This was first proposed and used in the 1990s in some rendering systems and John Carmack used it in the video game Quake. It mostly focuses on diffuse lighting, but can be used for any type of lighting calculations.
+
+Even though these are often called light maps, the assumption is that the surface is fully lit unless explicitly darkened, making these more like dark maps.
+
+See the images below where the full texture color is modulated by the circular light map to produce the final image.
+
+--5--
+There are two ways to solve this problem. The first is the combine the light calculations with the textures already used for the objects. This is a fine approach so long as lighting does not change, or the objects do not move, or both. Also, having the lighting directly associated with the object allows for any type of advanced lighting to be applied, including soft shadows.
+
+The second is to use a multi-texturing approach in which lighting is independent of the surfaces of the objects, and later modulated when rendering.
+
+The advantages to this approach are that lighting can be dynamic and light maps can be reused for multiple objects. Keeping lighting calculations separate from the objects gives you more freedom to create, store, and update light maps, but requires a completely different lighting system than what we have been using.
+
+--6--
+The problem of creating and storing light maps is not trivial. However, once created accessing the lighting,calculations is as easy as mapping 3D coordinates back to the light maps in the fragment shader. Watt's 3D Computer Graphics text has a section dedicated to this.
+
+Watt discusses a strategy of projecting polygons onto planes in the scene and grouping polygons based on similar lighting calculations. The planes are divided into sections called lumels, that can be projected back onto the polygons. The lumel planes can be stored as texture maps.
+
+The problem then becomes how to associate polygons with the appropriate lumel, but that relatively trivial. The larger issue with this approach is in sampling and interpolating lumel values when part of the sample contains values associated maybe with the polygon group, but not the polygon itself, leading to inaccurate results. 
+
+This concludes this video.

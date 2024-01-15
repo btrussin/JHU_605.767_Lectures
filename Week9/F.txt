@@ -1,0 +1,68 @@
+--2--
+In this video we discuss environment maps, how to create them and use them.
+
+--3--
+See the bagel models reflected off of the toaster, as well as some other objects, that I can't quite distinguish. This image is obviously using more than one environment map since you can also see the toaster reflected off the top of the table.
+
+The fact that there are no crumbs around that toaster is dead give-away that this a computer-generated image.
+
+--4--
+The idea behind environment mapping is similar to the recursive part of ray-tracing, where we follow the reflected ray and blend the returned color with the intersection color. We don't have the ability to iterate over the objects in the scene to find the reflected ray's intersection point, so we store the colors of the scene in a texture or series of textures.
+
+The environment map is from a particular viewpoint, usually from the perspective of the reflecting object.
+
+--5--
+We will discuss the creation of environment maps throughout this video, for now, let's just assume we have one. The reason we don't discuss a general method for creating an environment map is because the way we want the environment map to be created depends on the way we plan to intersect and sample it.
+
+The process to get the reflected color is similar to what we do in ray tracing. The compute the reflected vector at the point of intersection using the surface normal. This information is available to us in the fragment shader. Then, we see where the ray intersects the environment map.
+
+This means that we must put the environment map onto some sort of geometric surface that we can intersect. We will discuss the common ways to do this.
+
+--6--
+A note on reflecting off of large flat surfaces: Environment maps don't work very well in those cases because environment maps can be subject to aliasing artifacts. Also, environment maps are created typically from a single point, so sampling from a large flat surface may appear distorted.
+
+--7--
+Blinn and Newell's method for environment mapping is to use texture map method like we did mapping the earth texture to a sphere, using mercator projection. NASA's Blue Marble images are mapped this way. You can also capture images in this format using 360-degree cameras.
+
+The reflected vector can be converted to latitude-longitude coordinates and then to flat s-t coordinates.
+
+One of the main issues with this method is the uneven pixel density, there are many more pixels per surface area at the poles than at the equator.
+
+Also, finding or creating textures in this format can be challenging.
+
+--8--
+Spherical mapping is another method that is not quite like the Mercator coordinates, but does suffer from a distortion effect.
+
+The principle behind this method is to project the environment onto a sphere from a given view point.  A popular way to do this is to take a photograph of a shiny sphere. This only gives you half of the environment, but it is a much better sampling and the conversion to texture coordinates is a lot simpler.  
+
+This method is not as versatile as cubic environment napping so I won't go into much detail. Instead, I will refer you to the text, which has very good explanations and visuals for implementing this method, and the other resources listed here.
+
+--9--
+Cubic environment mapping use 6 texture buffers, each acting like a face of a cube. The environment is rendered into texture-back framebuffer objects from different directions: top, bottom, left, right, front, and back.  This should remind you of skyboxes, as they follow the same principles.
+
+The reflecting object is considered to be at the center of the cube looking in all directions at the inner faces of the cube.  The reflected vector intersects some place on the cube. The largest component of the vector indicates which face it intersects, and the appropriate texture coordinate is easy to determine.
+
+--10--
+Cubic environment mapping has several advantages over the other methods we discussed.
+
+The best advantage may be the fact that it can easily be created in real time by positioning the camera at the center of the cube and rendering the scene six times, one in each direction.
+
+Plus, texture samples are uniform, unlike with Blinn-Newel's method and spherical mapping.
+
+--11--
+Setting up a cube map for sampling in OpenGL is a little verbose, but otherwise looks very similar to 2-dimensional texture maps.  You can see some example syntax here.
+
+--12--
+Here are a few online references you may find valuable. The text also does a good job explaining this technique.
+
+--13--
+A few other methods of environment mapping that seem to be pretty good are Parabalod mapping and Octahedral mapping.
+
+Parabalod Mapping is similar to spherical mapping, but projects the environment onto parabloids instead of spheres. This has a very even texture sampling, moreso that regular spherical mapping.
+
+Octohedral mapping is similar to cube mapping, but with 8 faces instead of 6. Each face is a triangle instead of the square, and the whole scruture can be flattened into a single texture.
+
+--14--
+Environment mapping can be combined with other texture techniques to produce some intersting effects.  See how the environmnet map is pertubed using some bump mapping in this image on the right.
+
+This concludes this video.

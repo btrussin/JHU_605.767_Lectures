@@ -1,0 +1,49 @@
+--2--
+The video discusses implementation techniques for subdividing surfaces.
+
+--3--
+Subdividing surfaces involves more than just creating and updating vertex positions.  Other vertex attributes must also be considered. We already discussed normal vector calculations for the Loop and modified butterfly methods, but they use expensive trigonometry methods that may not be suitable for real time updates. A common real-time optimization for trig functions is to use a look-up table.  If performing subdivision as a preprocessing step, this is, or course, is not an issue.
+
+Regardless of when normals, or other attributes, are created or modified, extra storage is required.
+
+Other attributes, like texture coordinates or colors, normal interpolation and averaging following the subdivision rules of the vertex position can usually be followed.
+
+--4--
+Using our vertex lists, face lists, etc., are not enough to perform these subdivision techniques in a reasonable time. Directed edges, adjacent vertices, adjacent face, and so on, can be derived from the vertex and face lists, but having additional structures to store and quickly lookup this information is desireable, and may even be necessary, especially is doing any subdivision in real time.
+
+--5--
+Edge lists, vertex lists, and polygon lists typically point to each other, this is common. Edges point to their vertices, and sometimes their polygons.  Polygons point to their edges, and may point their adjacent polygons.
+
+There is definitely room to improve efficiency, both with memory space and lookups, but some pointers and allocations just can't be avoided. I recommend being prudent with regard to the structures you create. 
+
+--6--
+A winged edge structure is packed with information including vertices, adjacent faces, preceeding and following edges, and it's directed.  
+
+A vertex table has postions and pointers to connecting edges.
+
+A face table contains pointers to the edges that define the face.
+
+--7--
+A few other topics I will mention here, but not go into detail, are piecewise subdivision, displaced subdivision, and adaptive subdivision.
+
+With piecewise subdivision, parts of the control mesh is flagged and follows different subdivision rules than the rest of the mesh. This is used to unevely smooth out the mesh, preserving hard edges and points.
+
+Displaced subdivision takes advantage of bump and displacement maps and creates a finely detailed mesh, that can be rendered close to the camera.
+
+Adaptive subdivision is a technique performed in realtime for meshes that span so large an area that only portions of it benefit from subdivision. This is often used in terrains and allow for applications like open-world games to render geometry accurately and seemlessly both near and far. 
+
+The text briefly discusses these and there are online resources that go into depth as well. I recommend the GPU Gems series on NVIDIA's website as well.
+
+--8--
+Beyond the some obvious cases, there are uses for subdivision surfaces.
+
+Subdivision algorithms could save of storage space.  If the process of loading resources includes subdivision, saved information could have a smaller footprint. Plus, this enhances what features could be added when resources are loaded.
+
+Related to storage reduction is the ability to transmit data, like across the internet, in a reduced or compressed fashion. Computational load is increased, but if network transmission is a bottleneck in your application, that may be acceptable.
+
+--9--
+Of course, subdivision could be used to improve context.  Pixar, as I understand it, uses low-polygon mesh objects, then applies Catmull-Clark subdivision to define the final model.  Then, the appropriate model, whatever the level of subdivision, could be used for intended purpose.
+
+Given your subdivison algorithm can be used in real-time, this can be used for adaptive level of detail. We already mentioned the terrain example, but it can be used on any mesh.
+
+This concludes this video.

@@ -1,0 +1,92 @@
+--2--
+This is part 2 of our review of Texture Mapping, focusing on implementation using OpenGL and the OpenGL Shading Language.
+
+--3--
+OpenGL has much support for texture mapping, but so do all modern graphics APIs.
+
+The link below is an excellent, quick online resource.
+
+--4--
+Like any application, we must be very specific with texture mapping and how we intend to use it.
+
+We define the layout of the data, including the data types, bit precision, and number of channels per texel.
+
+We also need to decide how to use the texture values.  They can replace attribules, or modulate them.
+
+And, of course, the geometry must have texture coordinates.
+
+--5--
+Here is the reference for defining the texture format and populating the data.
+
+--6--
+When populating texture data, the incoming data must be in a supported channel and data type combination.
+
+Most of the options are listed here.
+
+--7--
+For internal storage, storage in texture memory on the GPU, OpenGL provides options for any type of channel and data type combination.  It is unlikely you will encounter a case not supported by any modern graphics API or GPU hardware.
+
+--8--
+To read in an image file, there are many availabel software packages.  Depending on the target platform for my application, I try to use as many native APIs as possible. For cross-platform applications, there are various options to choose from.  My latest image library of choice is STB Image.
+
+--9--
+Here are some instructions on how to use STB Image to load an image from a file. There is support for this already in the code provided for the course.
+
+--10--
+This is an overview of the code I have provided.
+
+--11--
+OpenGL also provides methods to update regions of texture data, instead of the whole buffer, set various parameters, creating different types of textures, copying texture data from one object to another, and so forth.
+
+--12--
+Listed here are the methods for generating, verifying, binding, and deleting textures.
+
+--13--
+There is native OpenGL support to generating mipmaps. It is a simple call to glGenerateMipmap while a texture is bound.
+
+You must specify the desired filtering methods.
+
+--14--
+Filtering options provide ways to deal with magnification and minification when they occur, which is most likely frequently.
+
+--15--
+Magnification filter options are nearest or linear.
+
+Minification is more complex and OpenGL provides many different filtering options including the mipmap level to use.
+
+--16--
+This is just a description of the difference between nearest and linear filtering options for magnification.
+
+--17--
+And this just describes how bilinear filtering works.
+
+--18--
+The minification filtering options are much more abundant because the solutions are much more complex. Options include filtering on a single mipmap level and between the two neares mipmap levels.
+
+--19--
+The options to repeat or clamp texture sampling outside of the zero-to-one ranges are pipeline configurations.
+
+These can be set separately for each dimension.
+
+--20--
+Here are examples of the different clamping and repeating options in practice.
+
+--21--
+Textures are more complex than other GPU resources requiring certain channels to be active in addition to texture being bound. And the setting of texture parameter can have a significant impact on performance.
+
+--22--
+Here is an example of how to reference, access and output texture coordinates in a vertex shader.
+
+--23--
+And this is an example of how to reference, access, and use textures and texture coordinates in the fragment shader.  This in an example of a decal texture where teh texel becomes the fragment color. In a scene with lighting the texel would scaled by the light calculation or blended with other colors.
+
+--24--
+On the application, this slide has some explanation of how setup texture mapping.  You will also find examples like this in the provided lab code.
+
+--25--
+This is an explanation of the texture access function in GLSL.
+
+--26--
+Finally, this is a very brief description of the difference between decal and modulation methods.
+
+This concludes this video.
