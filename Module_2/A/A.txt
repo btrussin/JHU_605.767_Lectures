@@ -1,0 +1,81 @@
+--2-- File 5
+In this Module we will discuss Ray Tracing and how to implement a Ray Tracing Application
+
+--3-- File 8
+Ray Tracing is a rich branch of Computer Graphics.  It encompasses all that we have learned thus far and adds to it.
+
+We will discuss the difference between ray tracing and ray casting and the general algorithms involved. We will also expand our knowledge of reflection models. We will discuss advanced lighting techniques, such as reflections, transparency, and shadows, as well as light refraction, procedural modeling, and more.
+
+--4-- File 9
+Here is a basic outline of what we we will be discussing over the next two modules.  
+
+This week we will focus on the basics of ray tracing and introduce a number of concepts. Next week we will extend the reflection model, add procedural textures, anti-aliasing (specifically for ray tracing), and a few other improvements.
+
+--5-- File 13
+Here are a few examples of ray traced images. 
+
+You may be impressed with the quality of these images, and even more impressed to know that you will develop all of the tools necessary to reproduce images like these over the next few weeks.
+
+--6a-- File 16
+Ray tracing techniques go far back in history as early as the 1600s. Ray tracing primarily deals with light interacting with surfaces. We have discussed this already and implemented simplified models of light interaction using BRDFs (bi-directional reflection distribution functions).
+
+Ray tracing has been used in computer graphics for decades, but started to see more research in the 1980s.
+
+--6b-- File 17
+Since ray tracing is not real-time interactive, the balance between efficiency and accuracy is much different than what we have experienced thus far. 
+
+Depending on scene complexity, degree of realism, resolution, efficiency techniques, processing power, etc., some images can take hours or even days to produce. You will see this firsthand as we get into the first programming assignment. However, in this course, if your images take more than a few minutes to render, then we should have a discussion about what you're doing.
+
+--7-- File 19
+Listed here are some techniques easily implemented using a ray tracer. They include every technique that can be implemented using the GPU-accelerated triangle raterizer while adding a few more.
+
+The realism we can achieve with ray tracing is a step far above what we have done so far with the GPU rendering pipeline, but it comes at a high computational cost. There are ways to utilize GPU acceleration, but we will not discuss these methods in these modules.
+
+Lastly, despite its many advantages, ray tracing does not solve all of the problems facing photorealism, as you will see.
+
+--8a-- File 20
+The basic algorithm is as follows:
+
+You create a ray with its origin at the camera, or eye position, in world coordinate space. The ray's direction is from the origin through the center of a pixel on the view plane. Then find the nearest object in the scene that the ray intersects. That becomes the basis for the color of that pixel. To determine the color at that intersection point, you apply a light reflection model like we did in the vertex and fragment shaders. The added benefit of course, is the that we can determine if the intersection point is in direct light or shadow, by tracing a ray from the point to the various lights sources in the scene, and determine the color accordingly.
+
+--8b-- File 21
+Also, if there is light reflected or refracted at the intersection point, we trace additional rays along those reflected and refracted vectors to determine what other light contributions we should add to the pixel color.
+
+This process continues until the rays no longer intersect any objects, or the light contribution becomes small enough to be ignored.  Also, you can set a limit to the number of recursions for each initial ray.
+
+You repeat these steps for every pixel in the target image.
+
+--9-- REDO [[2]]
+This algorithm, of course, has its limitations, so let's address them now.
+
+First, our rays are infinitely thin. So, during refraction and reflection, each light ray is not fragmented or split, rather it stays together, which is not realistic.
+
+Next, we consider our objects to be perfectly smooth. This makes our reflections and refractions very sharp. In reality this is almost never the case, except maybe in a room full of mirrors. 
+
+Finally, and this is a big one, we are tracing our rays backwards. In reality, light hits our eyes by moving forwards. Radiosity, which we will discuss later, addresses this problem, but it is highly compute intensive. Therefore, our ray tracer is going to be what is called a backwards ray tracer. We will be ignoring all of the indirect light that bounces around the scene and only focus on a fixed number of rays.
+
+--10-- File 25
+The first part of our algorithm is called ray casting. This deals only with the rays emitting from the camera through the view plane to determine the nearest intercepted object.  This technique is used for volume rendering. It is also used for simpler graphics applications and was used in the earliest 3-D first-person shooter games.
+
+The terms Ray Tracing and Ray Casting are sometimes used interchangeably. The commonly accepted distinction is that Ray Tracing is recursive and Ray Casting is not.
+
+The process is to create a center of projection. In this case, the camera or eye point.  A View Plane is a rectangular grid of pixels that will ultimately result in our final image. 
+
+There are different methods to construct the rays to do our sampling. The simplest, as mentioned on a previous slide, is to trace a ray through the center of each pixel.
+
+--11-- REDO [[3]]
+This diagram gives an example. The ray in the image intersects two objects in the scene, the yellow torus and the green cylinder. Since the torus is encountered first, the corresponding pixel becomes the color of the torus: yellow.
+
+This process is repeated for every pixel in the view plane grid.
+
+--12-- File 29
+This slide shows pseudo code for the algorithm that we just discussed.
+
+As you can see, the double 'for' loop, iterates over the rows and columns of the grid. Each line in the body of the inner loop could correspond to a separate function.
+
+--13-- File 30
+As I mentioned, ray casting was used in the earliest first-person shooter games such as Doom and Wolfenstein 3D.
+
+The algorithm they used was simplified which required their scenes to be somewhat uniform, but the techniques were the same as what we will be doing for our ray tracing project.
+
+This concludes this video.

@@ -1,0 +1,49 @@
+6G: Rendering Parametric Curves
+and Surfaces
+
+[no links]
+
+--2--  File 79
+This video discusse some things we must consider when attempting to render objects derived from parametric curves and surfaces.
+
+--3-- File 84
+Curves and surfaces must be sampled to get usable points for rendering. We can do this iteratively or use recursive subdivision.  Iterative evaluation is simple, but not necessarily efficient, unless you use forward differencing, which is dicussed on the next slide. However, this does not often lead to evenly spaced samples.  Another method is to recursively subdivide the curve or surface. This is also not very efficient, but often leads to more evenly-spaced samples.
+
+Sampling a Bezier surface patch can be done by sampling evenly along each of the orthogonal curves and creating a grid of vertices. These can then be connected by 2 triangles in each grid cell.
+
+--4-- File 86
+Forward differencing is an optimization that can be used for evenly sampling a parametric formula. A parametric curve, being continuous, can be sampled for any value of t between zero and one.  If we determine an interval for our t-values, say s, then our samples will be at 0, s, 2s, 3s, etc.
+
+Then, compute the derivates of the formula until you get to a constant.  So, for a cubic curve, you need the first, second, and third derivatives. Evaluate each derivative at t equals zero. 
+
+At iteration 1, you add the first derivate to the evaluated value from t equals zero, then add the second derivative to the first, and add the third derivative to the second. You repeat that until t reaches 1.
+
+For a curve sampled 100 times, this reduces the computations from hundreds of multiplications to hundreds of additions; a significant performance increase.
+
+--5-- File 87
+Recursive subdivision can also evaluate points along a curve, with a little more control than iterative sampling.
+
+The midpoints of the line segments connecting the control points, then connecting the midpoints of those new segments, creates control points for smaller sections of the total curve. This can be done recursively and the control points get closer and closer to the real curve. 
+
+This method can lead to more evenly sampled values along the curve as each recursive step can stop once a tolerance has been reached.
+
+--6-- File 89
+Here is an example of the first recursive subdivision of a four point Bezier curve.  You can see how the midpoints of the line segments are used to get other midpoints and control points for smaller sections of the curve.
+
+--7-- File 92
+Subdividing surface patches follows the same principles. You can split along one curve, then the orthogonal curve, and create four new patches for each recursive subdivision.
+
+Each recursion leads closer to a planar surface.  Again, you can stop once a tolerance has been reached, but uneven vertices along the edges can lead to splitting, and will have to be corrected.
+
+--8-- File 95
+The easiest approach is to uniformly subdivide to a predetermined level.  This is not a bad approach, especially when performed as a pre-process. 
+
+--9-- File 96
+A more elegant approach subdivides the surface until a flatness threshold is reached. This gives more attention, or more subdivisions, to portions of the surface with more curvature, and flatter sections can be neglected.
+
+--10-- File 97
+As I mentioned earlier, uneven subdivisions can lead to cracks, or tears, in the surface along the edges of adjacent patches. The solution to this is to use even subdivisions or make the necessary corrections as shown in the image below.
+
+This is a well-known problem that arises in different dynamically generated surfaces, so fixing tears in a surface is easy to solve, it just takes some work.
+
+This concludes this video.

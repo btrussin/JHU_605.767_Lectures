@@ -1,0 +1,39 @@
+8G: Reflections
+
+[no links]
+
+--2-- File 137
+Here we will discuss how to implement reflections in real-time applications.
+
+Even though reflections serve a very different purpose than shadows, the techniques for implementing them are so similar that it makes sense to talk about them here.
+
+--3-- File 138
+This is a simple example of a reflection in real-time. You can see the model perfectly reflected on the floor plane.
+
+--4-- File 140
+Accurate reflecting surfaces is a signature trait in ray tracing applications, but is not so easily implemented in real-time applications, partially because some global knowledge of the scene must be known at the polygon level. However, there are a few tricks that allow us to perform reflections in real time. The two main features that we need for real-time reflections are planar reflections and environment maps.
+
+First, we must classify the objects in our scene as either reflectors or reflected objects. A reflector is like a mirror, reflecting light that is in direct line of sight; you don't see the mirror itself in the reflected image.
+
+--5-- File 141
+A planar reflection is the same process for reflections that we did in ray tracing. We need the camera position, the normal to the surface, and the intersection point. All this is already available to us. Then we can easily get the incedent and reflected angles, from which we can derive the reflected ray.
+
+--6-- File 145
+We can derive the planar reflection matrix using the point on the reflecting plane and the surface normal vector. The principal behind this is to translate the reflecting plane to pass through the origin and we rotate the normal on the reflecting plane to align with the z-axis.
+
+If the reflection plane is the ground plane, then this matrix is quite simple. The formula for the general case is shown here.
+
+--7-- File 146
+Given the reflection matrix, we can render the geometry in the scene that will get projected onto the reflecting surface. Then we can draw the rest of the scene normally, blending the reflected surface fragments with the reflected image.
+
+--8-- File 147
+You may have noticed that there is no clipping to the reflected surface which means that we may draw objects that aren't really on the surface. A potential solution to this is to use the stencil buffer and only allow drawing to pixels that represent the reflected surface.
+
+Also, we need to be sure to only render objects that are in front of the reflected surface. 
+
+We can account for all of this but, there is a better solution.
+
+--9-- File 149
+Since we now know about framebuffer objects, and rendering to texture memory, we can actually render the scene from the point of view of the reflective surface and store that result as a texture map, then use that in a subsequent rendering pass to texture the reflected surface. This is discussed in greater detail in the next module.
+
+This concludes this video.

@@ -1,0 +1,65 @@
+9I: Procedural Textures in Shaders
+
+https://www.yaldex.com/open-gl/ch11lev1sec1.html [Regular Patterns]
+https://www.deviantart.com/luxoveggiedude9302/art/Luxo-Ball-Model-Render-773476116 [Luxo Ball]
+
+--2-- File 157
+In this final video of Module 9, we will discuss procedural texturing on the GPU.
+
+--3a-- File 158
+We have already discussed procedural texturing in ray tracing.  This was easy to do since we were programming on the CPU and had access to any information we wanted.
+
+In the last 20 years, we have seen more advanced GPUs, which allows us to do more programming in shaders. That, along with more built-in functions and the fact that we are seeing faster and more powerful graphics cards, enables us to perform procedural textures in real-time directly in shader programs.
+
+--3b-- File 162
+This has a few advantages over 2D texture mapping, namely a significantly smaller memory footprint, resolution that scales with your application, and the possibility to generalize your algorithms with parameters, uniform variables and vertex attributes.
+
+Some disavantages include computational costs, lack of filtering options such as mip-maps, and non-determinism across platforms due to inconsistent built-in function implementation.
+
+--4-- File 166
+There are many built-in functions that we can use via the OpenGL shading language, or we could define our own.  The general suggestion is to use built-in functions if availabe, because they may utilize some hardware acceleration. We also have the option to define or precalculate some of the algorithm in the application and pass those results to the shader using uniform variables, vertex attributes, or textures.
+
+Since we already have an idea how to generate texture patterns through algorithms, I think it is best to just cover a few examples using shader programs.
+
+The three examples I will cover are from the OpenGL Shading Languege text, 3rd Edition, by Rost and Licea-Kane, an excellent resource for GPU programming.
+
+--5-- File 167
+Here is an example of the procedurally generated stripe pattern on a torus, that is discussed on the next slide.
+
+--6-- File 168
+There are two main strategies for rendering stripes, one is to anchor the stripes to the object using some local coordinates, the other is to anchor the stripes to the world coordinates or some other exterior coordinate system.  The former functions like normal texture mapping, while the latter functions like carving out a sculture from some 3D volume.
+
+--7-- File 169
+This fragmant shader code is patterned after the example from the OpenGL Shading Language text.
+
+This uses the fraction part of the scaled s-coordinate of the texture coordinates, and performs a smooth transition between the stripe and base colors.
+
+--8-- File 171
+The next example is the famous Luxo ball from Pixar's first published short film, which has a cameo in all, or most of, the Pixar films.
+
+--9a-- File 172
+The ball has a yellow base color, a blue stripe in the center, and two red stars on either side. The strategy is to define each component separately. 
+
+The blue stripe is defined as the region between two planes. If a fragment lies between these two planes, it is given the blue color.
+
+--9b-- File 174
+The star is a little trickier, but follows the same pattern. The suggestion is to define the star using 5 independent planes that pass through the star's end-points.  Every point on the star is above at least four of the five planes. 
+
+This can be difficult to visualize in 3D, but can be simplified using a 2D example.  See the diagram on the right. Lines pass through the five star endpoints and are oriented towards the center. Regions above exactly 4 lines or all five lines define the inside of the star.  If the region is above less than 4 lines, it is outside the star.
+
+--10-- File 175
+The code is a bit long, so I won't include it, but the algorithm is quite simple.
+
+Check if the point is in-between the two stripe planes first.  If not, check the star patterns. Finally, output the base color if the other conditions don't pass.
+
+--11a-- File 179
+Bump mapping can also be performed without the use of a normal map, but the process is quite similar to the texture-based approach.  We still need to sample per-fragment and perform lighting in tangent space (or transform the normal vector to world space), but the normal vectors themselves can be produced procedurally.
+
+Similar to the stripe pattern, you can define regular regions. A good example is a dimple pattern. You can define regularly spaced dimples and derive the normal vector based on the distance of the fragment's coordinates from the dimple center. If greater than the dimple radius, the normal vector would be the same as the surface normal.
+
+--11b-- File 183
+For a less regular pattern, you could use the built-in noise3 function. You will most likely need to scale the input to get right effect, and you should consider the probability that the noise3 function will produce different results on different GPUs or platforms.
+
+The rest of the bump-mapping algorithm is the same as the texture-based method.
+
+This concludes this video.

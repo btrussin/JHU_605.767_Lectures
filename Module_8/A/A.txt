@@ -1,0 +1,63 @@
+
+8A: Shadows
+
+[no links]
+
+--2-- File 0
+This module focuses on real-time shadow techniques. This video introduces terms and concepts for the rest of the videos in the module. 
+
+The shadow techniques that we introduced in Module 2 for ray-tracing mostly do not apply for real-time applications.
+
+--3-- File 3
+Among the topics we cover in this module are stencil buffers, planar projected shadows, shadow volumes, which utilize the stencil buffer, and shadow mapping.
+
+We also briefly discuss texture use for prelit shadows and planar reflections.
+
+--4-- File 10
+This image is from an early version of this course using application-based renderers.  You can see that shadows suffer from aliasing just like texture mapping, and objects can suffer from self-shadowing, which we also saw in ray tracing. We will discuss other solutions to this in a later video.
+
+--5-- File 13
+Without shadows, our peception of depth, or distance between objects can be incorrect. They serve as visual cues.  Otherwise, objects can appear to float, or be misaligned with respect to others.
+
+Shadows add a sense of realism. Incorrect, or missing shadows is a common indicator of a fake image.
+
+Shadows are also used for dramatic effects, just like in other media.
+
+--6-- File 14
+A shadow is created when a light source casts light onto an occluder, and a receiving object displays a sudden change of brightness from the light source.
+
+As you can see in the image on the right, the Umbra is part of the receiver where no light from the light source is in direct view, and the Penumbra is the part of the receiver that receives partial light from the source.  The penumbra surrounds the umbra and is a gradual transition from light to dark.
+
+A hard shadow has a small penumbra, or no penumbra at all, and a soft shadow has a large, or at least noticeable, penumbra.
+
+The size of the light source surface, the size of the occluder, and the distances between the light source, occluder and receiver, all influence the sizes of the umbra and penumbra. 
+
+--7-- File 15
+It turns out that we are very forgiving when it comes to the shape of shadows. For this reason, many early video games used incorrect shadow shapes, like an oval on the ground, just to add the realism effect.
+
+Our point light model assumes an infinitely small light source, which produces only hard shadows.
+
+Shadows are dependent on the light sources with respect to the objects in the scene, making them view-independent. This means that shadows can be computed and reused for static scenes, only needing updates when the light sources or scene objects are updated.
+
+--8-- File 21
+Shadows in real-time graphics present two major obstacles, the shape of a shadow is highly dependent on the surfaces on which it is cast, and the intensity of the light inside the shadow requires some knowledge of global illumination.
+
+Our typical rendering pipeline is view-dependent, and only has knowledge of the current geometry, and of course the framebuffers, but they don't have enough information to determine shadows.
+
+Therefore, shadow generation requires a preliminary rendering pass, whether it is precomputed offline, or done in a multi-pass renderer.
+
+--9-- File 24
+The real-time illumination models, like Blinn-Phong reflection, do not account for objects globally, only surfaces and light sources.
+
+We already covered how to account for other objects using ray-tracing and radiosity, but those are too expensive for most real-time renderers.
+
+The algorithms we will discuss do not affect the reflection models we are currently using, however, extra steps may result in the scaling of the reflection model's light contribution.
+
+--10-- File 25
+The algorithms we will discuss were developed to fit within the framework of the standard real-time rendering pipeline. There is no simple way to create shadows that anybody has yet discovered, so most of the techniques will feel somewhat forced, and use some hardware features in interesting ways, not necessarily the way they were originally intended.
+
+Shadows are a kind of hidden surface removal technique, only with respect to light, not the viewer.
+
+Finally, you should note that these algorithms are not easy, and are subject to many of their own problems, which we will see.
+
+This concludes this video.

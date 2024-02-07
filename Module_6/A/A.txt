@@ -1,0 +1,71 @@
+6A: Introduction to Parametric Curves
+
+[no links]
+
+--2-- File 0
+Module 6 focuses on curves and curved surfaces.
+
+In this video, we will just introduce some terminology and concepts that will be used throughout the module.
+
+--3-- File 3
+Throughout module 6, we will cover various types of curves and surfaces, how to render them, some OpenGL support for curves, and some of their common uses.
+
+--4-- File 4
+This image should not be strange to you, we have already generated mesh objects based on some parametric representations such as spheres, cylinders and toruses.  Curves and surfaces generalize parametric representations allowing more freedom in what we can create.
+
+--5-- File 6
+A polyline is a series of connected line segments, represented as a set of vertices and edges. At best, a polyline can only approximate a curve.  
+
+Polylines and polygons can be manipulated, but this is cumbersome. 
+
+A curve, however, is more abstract. This allows for easier manipulation and editing, and less storage space.
+
+--6-- File 9
+Parametric, meaning defined by parameters, describes mathematical or computational functions. Curves and surfaces are commonly referred to as splines. The word spline comes from a thin strip of wood or metal used in building construction. A mathematical spline functions abstractly in the same way: curves can be constructed from a framework defined with a small set of points.
+
+Surfaces are constructed from orthogonal curves.
+
+Splines are commonly used in CAD programs and were first developed by a French engineer who worked at Renault to develop car bodies.
+
+Curves are abstract, defined by a relatively small set of points. Curves are then sampled to extract points that are used for rendering in computer graphics.
+
+Surfaces are extensions of curves, but the concepts are the same.
+
+--7-- File 11
+3D curves are used in a variety of ways in computer graphics.
+
+A set of points, like seen in the image on the right, has clear start and end points, p-0 and p-1. A curve is then sampled as a function of t, with t-values between zero and one, which will give a set of points that can then be rendered as a polyline. The number of samples will dictate how closely the polyline represents the curve.
+
+The function applied to the points varies according to the type of curve and will be discussed in detail in later videos of this module.
+
+--8-- File 14
+Linear interpolation between two points is defined as seen here.  It is simple and ubiquitous, but limited; insufficient for representing smooth curves. 
+
+The sampling we will be doing with curves is similar but a little more complex.
+
+Consider the image on the right of a curve from point-a to point-c, but influenced by point-b. We can get a close approximation to the curve by repeatedly subdividing the line segments and connecting the new points, as shown with segments a-d-f and f-e-c. Eventually, this will produce a parabola.
+
+This is essentially what we are doing when it comes to curves, but using an easier process.
+
+--9-- File 15
+Parametric curves have a start and end point, along with some control points. The start and end points are also considered control points. To derive points along the curve, we blend the control points using what is called a basis function.
+
+With this representation, we can quickly and easily change the entire curve by moving one or more control points then resample the curve to get a new polyline.
+
+A characteristic or control polygon is derived from the control points.
+
+--10-- File 16
+The basis, or blending function varies for different types of curves and we will later define the basis functions for bezier curves and b-splines.
+
+The basis function applies a weight to each control point and sums the result. This is done for each sample 't' of the curve.
+
+Basis functions are independent of each dimension.
+
+--11-- File 17
+Lastly, a convex hull is a convex polygon that wraps a set of points. Think of this as a rubber band around a set of points.
+
+Convex hulls are quite useful, and often used as a bounding volume for a polygon. Most parametric curves are bound by the convex hull of their control points, which is useful for some analyses of curves.
+
+This concludes this video.
+
+

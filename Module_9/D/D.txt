@@ -1,0 +1,35 @@
+9D: Material Mapping
+
+http://www.ozone3d.net/tutorials/glsl_texturing_p05.php [The Art of Texturing Using The OpenGL Shading Language]
+
+
+--2-- File 59
+In this video we discuss material mapping and alpha mapping.
+
+--3-- File 60
+We have established that lighting calculations are expensive and are best done per pixel. We have also talked about passing the diffuse calculation to the vertex shader and just interpolating that value for use in the fragment shader. However, we know that can't be optimized for the specular component. Another optimization could be to pre-process these values and store them in texture maps.
+
+We could combine the ambient, diffuse, and base color components into a single texture, if that's possible, for the object.
+
+It is common to compute the specular component, the most expensive shading component, into a texture.  This is referred to as gloss map.
+
+--4-- File 65
+Another use of a gloss map allows us to define varying material properties across surfaces of an object. The shininess of an object may not be uniform. We could assign a single floating point value per texel for the appropriate shininess and store it as a gray-scale, or single-channel, image file.
+
+We could then access that texture while rendering to apply the appropriate shine at that texel.
+
+For example, a '0' value could contribute no specular component, and a '1' could contribute the full specular component.
+
+--5-- File 67
+Alpha mapping is an extension of material mapping where we can apply transparency to different parts of the texture. This is often used for decaling and two-dimensional sprites.
+
+Using this technique, we can get what we call a cut-out where we represent a complex object in an image that looks like a model from a distance. We use this in billboarding, which we will explain later.
+
+We can even blend alpha and texture animations to create interesting effects like flickering torches, explosions, and so forth.
+
+--6-- File 68
+Loading and using images with a single channel is easy enough. STB supports this if you load the image using the option STBI_grey.
+
+You can see the fragment shader snippet at the bottom of this slide for how to use a texture in this format.
+
+This concludes this video.

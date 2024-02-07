@@ -1,0 +1,60 @@
+5E: Other Culling Techniques
+
+https://luebke.us/publications/pdf/portals.pdf [Portals and Mirrors: Simple, Fast Evaluation of Potentially Visible Sets]
+graphics.stanford.edu/courses/cs248-00/real-time-programming/moller-cs248-00-lecture.ppt [Detail Culling]
+https://www.gamedeveloper.com/programming/occlusion-culling-algorithms [Occlusion Culling Algorithms]
+https://developer.nvidia.com/gpugems/gpugems2/part-i-geometric-complexity/chapter-6-hardware-occlusion-queries-made-useful [Hardware Occlusion Queries Made Useful]
+
+
+--2-- File 81
+In this video we discuss portal, detail, and occlusion culling techiniques.
+
+--3-- File 82
+Portal culling is another common technique that is especially useful in an indoor setting with multiple rooms and doorways. 
+
+This uses similar structures as view frustum culling that are based on visible areas through doors and windows.
+
+--4-- File 83
+The approach is to divide the scene into cells and create a structure in which adjacent rooms are connected. This often requires a pre-processing phase.
+
+The approach is relatively simple. First, you render the cell in which the camera is located, using typical view frustum culling. Then you project any visible portals onto the screen and create another frustum based on its projection and draw any cells that are visible through it. Then you do the same for any visible cell, and recursively follow that pattern until no more cells are visible.
+
+--5-- File 85
+Detail culling is more fine-grained than view-frustum and portal culling, and it focuses on culling triangles or entire models, or portions of models, that contribute very little to the final image.
+
+The text discusses the case where the camera is in motion and triangles can be culled because the user will not notice their absence.
+
+Another method determines in the application stage that small enough triangles will not contribute to the final image and are culled.
+
+--6-- File 86
+The occlusion culling technique functions like the z-buffer where objects that are determined to be behind other objects with respect to the view-reference-point, are not sent to the renderer. An extreme, but illustrative example in the text shows how a sphere that occludes other spheres can avoid sending those objects to the renderer in the application stage.
+
+There are multiple approaches to performing occlusion culling.
+
+--7-- File 87
+The basic structure of the algorithm is as follows:
+
+The occluded region starts out empty. Iterate over every object in the scene.  If the object is occluded by the current occluded region (the first object obviously will not be), then it is skipped, otherwise the object is rendered and it contributes to the occluded region used in subsequent iterations.
+
+--8-- File 88
+The performance gain from this method is dependent on the order in which objects are drawn. It performs best if closer objects are rendered first as even very small objects can occlude very large objects.
+
+--9-- File 90
+There is some GPU support for occlusion culling that functions like a z-buffer sending geometry through a simplified render pass and determines if any visible fragments will be rendered.  This is done through a query method.
+
+If the object ends up being rendered anyway, then you have essentially rendered the object twice, even though the first pass was simplified. So this method only shows significant performance increase when large objects get culled. This means that we still want to render our objects from front to back.
+
+An intelligent approach to this method would be to send simplified geometry, like bounding volumes, through the occlusion query instead of the full geometry
+
+--10-- File 92
+This slide and the next give the OpenGL methods used to perform this query. A query object is generated in a similar manner as other OpenGL objects. After the query is activated, objects are rendered and the query is ended, then the result can be retrieved.
+
+--11-- File 93
+Here is an example, for your reference.
+
+Note that this feature is not supported for OpenGL ES distributions.
+
+--12-- File 96
+Finally, there is a technique used to apply occlusion culling to cityscapes by way of occluding horizons. This leverages the occluding nature of buildings. This is not too different from regular occlusion culling where the occluded region is constantly being updated, except that some simplifications can be made.
+
+This concludes this video.

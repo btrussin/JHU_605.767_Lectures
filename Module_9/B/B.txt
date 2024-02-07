@@ -1,0 +1,102 @@
+9B: Texture Review Part 2 - OpenGL
+
+https://www.flipcode.com/archives/Advanced_OpenGL_Texture_Mapping.shtml [
+Advanced OpenGL Texture Mapping]
+https://www.khronos.org/opengl/wiki/Image_Libraries [Image Libraries]
+https://github.com/nothings/stb [STB Image]
+https://openil.sourceforge.net [DevIL]
+http://www.g-truc.net/project-0024.html [GLI]
+
+
+--2-- File 34
+This is part 2 of our review of texture mapping, focusing on implementation using OpenGL and the OpenGL Shading Language.
+
+--3-- File 34
+OpenGL has much support for texture mapping, but so do all modern graphics APIs.
+
+The link below is an excellent, quick online resource.
+
+--4-- File 7
+Like any application, we must be very specific with texture mapping and how we intend to use it.
+
+We define the layout of the data, including the data types, bit precision, and number of channels per texel.
+
+We also need to decide how to use the texture values.  They can replace attributes, or modulate them.
+
+And, of course, the geometry must have texture coordinates.
+
+--5-- File 7
+Here is the reference for defining the texture format and populating the data.
+
+--6-- File REDO 7
+When populating texture data, the incoming data must be in a supported channel and data type combination.
+
+Most of the options are listed here.
+
+--7-- File 5
+For internal storage, storage in texture memory on the GPU, OpenGL provides options for any type of channel and data type combination.  It is unlikely you will need a combination not supported by any modern graphics library.
+
+--8-- File 5
+To read in an image file, there are many available software packages. Depending on the target platform for my application, I try to use as many native APIs as possible. For cross-platform applications, there are various options to choose from. My latest image library of choice is STB Image.
+
+--9-- File 37
+Here are some instructions on how to use STB Image to load an image from a file. There is support for this already in the code provided for the course.
+
+--10-- File 37
+This is an overview of the code I have provided using STB Image.
+
+--11-- File 37
+OpenGL also provides methods to update regions of texture data, instead of the whole buffer, set various parameters, creating different types of textures, copying texture data from one object to another, and so forth.
+
+--12-- File 40
+Listed here are the methods for generating, verifying, binding, and deleting textures.
+
+--13-- File 40
+There is native OpenGL support to generating mipmaps. It is a simple call to glGenerateMipmap while a texture is bound.
+
+You must specify the desired filtering method in order to use the mip maps.
+
+--14-- File 40
+Filtering options provide ways to deal with magnification and minification when they occur, which is usually frequently.
+
+--15-- File 42
+Magnification filter options are nearest or linear.
+
+Minification is more complex and OpenGL provides many different filtering options including the mipmap filtering option to use.
+
+--16-- File 42
+This is just a description of the difference between nearest and linear filtering options for magnification.
+
+--17-- File 42
+And this describes how bilinear filtering works.
+
+--18-- File 44
+The minification filtering options are much more abundant because the solutions are much more complex. Options include filtering on a single mipmap level and between the two nearest mipmap levels.
+
+--19-- File 44
+The options to repeat or clamp texture sampling outside of the zero-to-one ranges are pipeline configurations.
+
+These can be set separately for each dimension.
+
+--20-- File 44
+Here are examples of the different clamping and repeating options in practice.
+
+--21-- File 45
+Textures are more complex than other GPU resources requiring certain channels to be active in addition to a texture being bound. And the setting of a texture parameter can have a significant impact on performance.
+
+--22-- File 45
+Here is an example of how to reference, access, and output texture coordinates in a vertex shader.
+
+--23-- File 46
+And this is an example of how to reference, access, and use textures and texture coordinates in the fragment shader.  This in an example of a decal texture where the texel becomes the fragment color. In a scene with lighting the texel would scaled by the light calculation or blended with other colors.
+
+--24-- File 47
+This slide has some explanation of how to setup texture mapping in the application.  You will also find examples like this in the provided lab code.
+
+--25-- File 47
+This is an explanation of the texture access function in GLSL.
+
+--26-- File 47
+Finally, this is a very brief description of the difference between decal and modulation methods.
+
+This concludes this video.

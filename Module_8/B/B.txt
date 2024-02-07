@@ -1,0 +1,48 @@
+8B: Stencils
+
+[no links]
+
+--2-- File 26
+In this video we discuss stencil buffers. This is a feature we have not yet used, and only briefly mentioned, but a well-established shadow volume algorithm uses it, and they can be useful for other features, so we should to be familiar with it.
+
+--3-- File 28
+A stencil buffer is a framebuffer that is strictly used for generic calculations, not for rendering to the screen.
+
+In fact, all implementations that I have seen have put the stencil buffer in the same memory space as the depth buffer, allocating 8 bits per pixel for stencil values, and the rest for depth.  Or, just using an 8-bit stencil buffer without a depth buffer.
+
+The stencil buffer is ad-hoc, meaning it does not have an inherent purpose, rather has some general functions that can be used by you the application designer.
+
+Stencil buffers have been used to implement a number of features including shadow volumes, the reason we are mentioning it here, silhouettes, defining and handling transparency regions, and stippling effects.
+
+--4-- File 30
+Stencils are per-pixel tests. Every fragment can test against the stencil value, and optionally write to the stencil buffer. Most of this is handled through pipeline configuration calls, which are outlined in a few slides. Stencil operations are performed when certain stencil or depth conditions are met based on the configuration.
+
+Stencil buffers are supported by all the major graphics libraries, and on most hardware.
+
+--5-- File 35
+Requesting a stencil buffer with SDL uses the same pattern as requesting a depth buffer.
+
+The common bits to request are 8, 4, and 1, but 8 is the most common. You can always query the attribute value after setup to get the exact value, and to see if the configuration succeeded.
+
+The stencil buffer should be cleared along with the other framebuffers.
+
+And, stencil functions can be enabled and disabled using glEnable and glDisable.
+
+--6-- File 38
+The stencil mask and function must also be set.
+
+The mask, an unsigned integer, corresponds to the bits that can be written to. If the bit has a '1', it can be written to, a '0' means it is write-protected.
+
+The stencil comparison options are the typical boolean operations.
+
+The stencil test can also be enabled and disabled.
+
+--7-- File 41
+The stencil operations are defined using glStencilOp for each of the three test conditions, if the stencil test fails, if the depth test fails, and if the depth test succeeds.
+
+I will discuss how this is used during the shadow volume video which may help to understand these concepts, if they are still unclear.
+
+--8-- File 42
+I haven't seen stencil operations used extensively, but there are some examples you can find online and in some textbooks. Beyond their use in shadow volumes, which we will cover shortly, there is much untapped potential there, in my opinion.
+
+This concludes this video.

@@ -1,0 +1,95 @@
+--2-- File 0
+In this video, we will discuss the recursive parts of our ray tracing algorithm. 
+
+We will discuss recursion at a high-level, and then specifically discuss reflection, refraction, and shadow generation.
+
+--3-- File 1
+This image, from a class in 2008, was rendered using all of the topics that we will discuss in this video.
+
+--4-- File 2
+In the previous video, we discussed how rays are constructed from the camera point through the pixels on the view plane. Once we find that initial intersection point, we may spawn additional rays to determine the reflected or refracted light that also contribute to the color at that point. Also, we spawn a ray from that intersection point to each light source to determine whether or not that point receives light directly from that source, or if it is obscured by another object in its path. This determines the light contribution at that point including whether or not it is in shadow.
+
+Shadow rays are simple and end at each light source. However reflected and refracted rays are meant to intersect objects in the scene. So, for each of those intersections, we need to repeat the process, determining light contribution, including shadows, and possibly spawn additional reflected and refracted rays.
+
+Due to the recursive nature of ray tracing, it is often implemented as a recursive algorithm.
+
+--5-- File 4
+This diagram illustrates an example. 
+
+You can see that an initial ray is traced from the eye through the view plane and intersects a partially transparent object. The light on that surface is determined by tracing a ray from that point to the light source. 
+
+Then two additional rays are generated, one is refracted through the object and the other reflected off of the surface. 
+
+For each of these two additional rays, we also need to determine the light contribution at their intersection points, and add their light contributions to the initial intersection point.
+
+--6-- REDO [[6]]
+It may help to visualize this process as a tree structure. Each node is an intersection point and each parent-child relationship is a ray generated from a shadow or a reflected or refracted ray. We could then halt the ray-tracing process once the graph reaches a pre-determined maximum depth. 
+
+The maximum depth represents the case that any additional rays' contributions woule be so insignificant that they can be ignored altogether.
+
+--7-- File 7
+This slide shows the pseudo code for implementing a recursive ray tracer.
+
+Note that this implements all three types of recursive rays iterating over each light source for the shadow rays, and only spawning a reflective and refractive ray if necessary. It also checks the recursion level to determine max depth.
+
+--8-- File 8
+Determining a reflected ray should be familiar to you already, as we have done this in our shading models for specular highlights. Make sure that you understand the reflection concepts and mathematics, and go back and review if needed.
+
+--9-- File 9
+Refraction is new to us, and is somewhat more complicated than reflection, but is related.
+
+You can see that the sphere in the center of this image refracts the light and produces a crystal ball effect on the rest of the scene.
+
+--10a-- File 11
+Refraction is the effect of light passing from one material into another. Light travels at different speeds, depending on the material the light traverses. If the light enters the material head on, or parallel to the normal of the surface, no refraction occurs.  However, if the light enters the surface at an angle, the light can slow down or speed up and give the appearance of it bending as it travels.
+
+We calculate this bend, or refraction, using Snells law, which requires the incident angle and the indices-of-fraction of the two media.
+
+--10b-- File 12
+Consider the case looking through glass. As light travels between the eye and the glass. The air has a low refractive index and its affect on light is nearly imperceptible.
+
+However, as the light travels through glass, which has a much higher refractive index, the light appears to bend. As the light exits the glass, it  travels nearly along its previous path, giving the effect that the light is slightly offset.
+
+--11-- File 15
+If we know the incoming direction of the ray, the normal to the surface, and the index of refraction of the media, we can determine the refracted direction of the ray using the math provided on this slide.
+
+The factor mu is the ratio of the exiting medium over the entering medium indices of refraction. Then the refracted direction is mu times I, the initial direction of the ray, minus mu times I dot N plus cosine phi times the normal vector. Cosine phi is the square root of one minus mu-squared times 1 minus I dot N-squared.  Both I and N are assumed to be unit length.
+
+This formula is derived by using the relationship of M times sine phi minus cosine phi, where M is a unit vector perpendicular to N in the plane of I and T.
+
+You can follow the rest of the derivation as explained on the slide.
+
+--12-- File 16
+Since most of the information can be derived using the ray mathematics that we have been using thus far, the only variables left are the indices of refraction. There are many resources on the internet that have the indices of refraction for common materials, but I have listed a few here for convenience.
+
+--13-- File 18
+If the incident angle of the incoming ray is sufficiently large, then phi exceeds 90° and the ray is reflected instead of refracted. This is called total internal reflection.
+
+Theta C is called the critical angle, the angle at which total internal reflection occurs. We can detect this while computing cosine phi. If the value under the square root is less than zero, the value will be imaginary and total internal reflection has occurred. Therefore we would compute a relected ray instead of a refracted ray.
+
+--14-- File 19
+To handle refractive recursion in ray tracing, we must keep track of the medium and its refractive index through which the ray is passing in order to properly determine mu. 
+
+If we add the constraint that translucent objects cannot inter-penetrate, the problem becomes simpler. 
+
+The ray alternates between inside an object and the outside air. Note, when determining the exit ray of translucent objects, we must reverse the sign of the normals in order to properly compute the exiting refracted ray.
+
+If translucent objects can inter-penetrate, the problem becomes a little more complicated, but not impossible. In this case, we keep track of the objects the ray is inside in a list, with the corresponding material properties. 
+
+--15-- File 20
+Finally, we will discuss shadows.
+
+--16-- File 21
+Until now, we have only considered local lighting contribution, which is if a point receives light from a light source. In ray tracing, we can easily determine if there is an object in between the intersection point and the light sources in our scene.
+
+We create a ray, often called a shadow feeler, from the intersection point to each light source, and determine if there is an object in its path.
+
+If there is no object, then we compute the light contribution normally. However, if there is an object in its path, then the intersection point only receives the ambient contribution from that light source.
+
+--17-- File 22
+A shadow feeler must be generated for each light source in the scene. This increases the computational complexity the more lights we add to the scene. For a standard ray tracer this means that each ray will spawn up to N plus 2 rays. 
+
+The shadow feelers are less expensive than normal rays since they do not spawn additional reflected or refracted rays, and do not need to test for all intersections just if an intersection occurs.
+
+
+This concludes this video.

@@ -1,0 +1,43 @@
+6B: Continuity Considerations
+
+[no links]
+
+--2-- File 18
+This video defines orders of continuity.
+
+--3a-- File 19
+It is common to join curves to make a larger, more-complex curve.
+
+Depending on how we want the curves to behave when they are joined, certain constraints must apply. Continuity means that the adjoining curves are equal at a common endpoint.
+
+Zero order of continuity, C0, means that the position of the end points are equal.
+
+First order continuity, C1, means that the first derivative of the parametric equation is equal at the common endpoint. Visually this means that the tangent vectors at the end point, or slopes of the curves at the end point, are equal.
+
+--3b-- File 20
+Second order continuity, C2, means that the second derivative of the parametric equation is equal at the common endpoint. The rate of change of the slopes of the curves at the common end point are equal.
+
+Visually, C2 continuity may not make much of a difference, but when using parametric curves to define motion and animation, this becomes noticeable.
+
+--4-- File 21
+Geometric continuity, defined as G0, G1, etc., is similar to parametric continuity, but with relaxed constraints. G0 and C0 continuity are the same, but G1 differs from C1 slightly.  In both, the tangent vectors are in the same direction, but with G1 continuity, the magnitudes may differ. In C1 continuity, the magnitudes are the same.
+
+Essentially, geometric continuity is weaker than parametric continuity.
+
+See the figures in the text and listed here for good visual examples.
+
+--5-- File 22
+This visual gives a good description of the differences between the various levels of continuity. 
+
+You can see that with C-zero continuity, the end points are the same, but there is a sharp corner going from the first to the second curve.
+
+In C1 continuity, the direction is the same but the rate of change of the direction is very different in the second curve than the first one.
+
+In C2 continuity. the rates of change of the curves are consistent, giving a very smooth transition from one curve to the other.
+
+--6-- File 27
+Second order continuity is especially important in computer aided design and animation.
+
+As continuity relates to motion, the first derivative is the velocity, and the second derivative is the acceleration. Without constraining movement to conform to 2nd derivative continuity, we would see very abrupt changes in animation sequences.
+
+This concludes this video.

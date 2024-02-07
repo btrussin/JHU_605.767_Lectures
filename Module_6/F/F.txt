@@ -1,0 +1,27 @@
+6F: Parametric Surfaces
+
+[no links]
+
+--2-- File 72
+This short video discusses curved surfaces.
+
+--3-- File 74
+Given the tools we now have for generating various types of curves, we can use a pair of orthogonal curves to evaluate a curved surface.  
+
+The concept is simple, we sample each curve over both intervals, each sample becoming a vertex of a mesh surface.
+
+A simple example is to use two cubic Bezier curves with the control points of one of them along the x-axis, and the control points of the other along the y-axis. Then iterate over u and v from 0 to 1 as a double loop.
+
+--4-- File 75
+A Bezier surface patch gives us all the properties we would expect.  The corners touch the combinations of the start and end points of the pair of curves. The entire surface is bound by the convex hull of all the control points, extended along the orthogonal curves.
+
+Also, we can obtain the tangent and normal vectors at each vertex of the patch using the derivatives of the samples with respect to 'u' and 'v'. 
+
+--5-- File 78
+Joining two Bezier surface patches requires some of the same conditions as joining two Bezier curves, but becomes more complicated as we are now accounting for another dimension.
+
+G0 continuity requires vertices along the edges to be equal, meaning that the control points must be equal.
+
+G1 continuity requires the polyhedra along the edges to be colinear. There are some techniques to make this happen, and the text discusses one of them.
+
+This concludes this video.

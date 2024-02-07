@@ -1,0 +1,112 @@
+7C: Subdivision
+
+https://mrl.cs.nyu.edu/publications/subdiv-course2000/ [Subdivision for Modeling and Animation]
+http://www.multires.caltech.edu/teaching/courses/subdivision/ [Subdivision Course Content]
+https://www.gamedeveloper.com/programming/building-your-own-subdivision-surfaces [Building Your Own Subdivision Surfaces]
+https://mrl.cs.nyu.edu/projects/modeling_simulation/subdivision/ [Subdivision Surfaces]
+https://www.gamedeveloper.com/programming/implementing-subdivision-surface-theory [Implementing Subdivision Surface Theory]
+https://people.eecs.berkeley.edu/~sequin/CS284/PAPERS/root3subdiv.pdf [Interpolartory SQRT-3 Subdivision]
+
+--2-- File 16
+This video covers subdivision and surface refinement.
+
+--3-- REDO [2]
+In order to refine a surface, we need smaller triangles, which means more vertices. An easy way to get more vertices and more triangles is to subdivide each triangle. This process is easy to perform, but incorporating the new primitives into the current structure is tricky. I find it best to just create a whole new vertex buffer.
+
+This process can be repeated until a desired depth, or triangle size, or vertex count has been reached.
+
+If the vertices contain attributes in addition to position, these also must be interpolated.  Remember to re-normalize any vector attributes.
+
+--4-- File 18
+Here are a couple of images demonstrating the power of subdivision techniques that are currently being used.
+
+--5-- REDO [5]
+Subdividing surfaces was introduced in the 70s and certain techniques have been highly used in many applications and productions, because of their many advantages.
+
+Subdivision bridges the gap between discrete mesh surfaces and parametric surfaces like the curves and surfaces we discussed in the previous module.
+
+Subdivision not only increases the vertex count; some methods also smooth out polylines and surfaces by averaging the attributes of the original reference points.
+
+And, subdivision inherently has multiple levels of detail.
+
+--6-- File 21
+There are several methods for subdividing a curve. This slide illustrates Chaikin's method. The images below show a course polyline and the first subdivision. New vertices are created a quarter of the length of each edge from the vertices. This can be repeated until you get to a close approximation of a curve.
+
+Infinite subdivision converges to what is called the limit curve.
+
+Note that this method does not retain the original vertices, rather it replaces them with an ever-smoother approximation.
+
+--7-- File 25
+An interpolating approch to subdividing a curve does, however, retain the original points. This approach gives weights to the original vertices and adds one subdivision along each edge of the polyline as the formula listed here dictates.
+
+This method doesn't produce as rounded of a curve as Chaikin's method, but does preserve original data, making it ideal for cases where data preservation is necessary.
+
+--8-- File 26
+Subdividing a surface follows the same general principles as subdividing curves. We can produce more vertices and smooth out the surface at the same time. There are many good online resources that cover this topic and there are many common algorithms in use.
+
+--9-- File 28
+Surface subdivision is generally performed in two steps. First, the polygons are divided into smaller polygons and new vertices are created; this is called the refinement phase. Next, some or all of the original vertices are adjusted, related to the previous step. This is to smooth out the surface.
+
+Subdivision methods are classied by three major attributes: polygon-based or triangle-based, stationary or non-stationary, meaning the same rules or different rules are applied at each subdivision level, and uniform or non-uniform, whether or not all vertices, edges and faces are all treated the same.
+
+The algorithms we present in this video are all stationary.
+
+--10-- File 30
+Loop's subdivision is one of the earliest subdivision algorithms. It works on triangles and refines and smoothes the control mesh. Each triangle is divided into 4 triangles as shown in the image below.
+
+The notation for vertices is p-0 to p-n, where each represents the adjusted vertex at a subdivision level. 
+
+The valence of a vertex is the number of adjacent vertices, connected by edges. A regular vertex has a valence of 6, as seen in the image at the bottom right. 
+
+Any other number valence is considered irregular.  Regular vertices have special continuity properties as discussed on the next slide.
+
+--11-- File 34
+Listed here are the rules for adjusting existing vertices and creating new vertices. There is no need to take the time and fully comprehend this unless you plan to implement it. These slides and the details in the text should be sufficient instruction to do so.
+
+The main problem you may run into is how to store and connect the vertices at each subdivision level, and how to relate them to the previous level.
+
+One benefit to Loop's method is that vertices with valence of 6 have C2 continuity at each subdivision level, and each new vertex created in Loop's algorithm has a valence of 6.
+
+--12-- File 35
+To compute the normal vector at each subdivision, you can perform the face average method, but there is a faster computational method as described here, and in the text.
+
+Loop's subdivision is a fair method, meaning that the surface bends very nicely. A major disadvantage however, is that surfaces tend to shrink.  The text has a few images that demonstate this.
+
+--13a-- File 43
+I will briefly describe two other subdivision techniques here, before moving onto the main one on the next slide.
+
+The modified butterfly scheme extends another algorithm simply called the butterfly scheme. The interpolation is similar to Loop's algorithm except that once a vertex is created, including those of the control mesh, its position never changes.  
+
+This algorithm works well for some models, but not for others.
+
+One of the complexities is that there are four distinct rules for creating new vertices along an edge, depending on the valence of the two end vertices of the edge, and whether or not the vertex lies on the mesh boundary.
+
+The 4th edition of the text does not discuss this method, but there is a good discussion of it in the 3rd edition, and the link provided here is also a good resource.
+
+--13b-- File 44
+The square-root of 3 method differs from the previous two methods in that new vertices are created at the midpoint of triangles instead of along edges. This creates less vertices at each subdivision level, but otherwise retains all of the advantages of Loop's and the modified butterfly methods.
+
+Creating a vertex at the midpoint of a triangle and connecting it to the original vertices makes for some less-desireable, oblong triangles. To account for this, the square-root of 3 method flips the edges of the original triangles, creating more-regular triangles.
+
+A description of this method is also absent from the 4th edition of the text, but the link here provides a good description and visuals.
+
+--14a-- File 47
+The text discusses a commonly used subdivision method called Catmull-Clark subdivision, and for good reason. This is polygon based, so it works on both triangles and generic polygons. It is very easy to understand and implement, and produces very good results.
+
+The process is as follows:
+
+For each subdivision level, new vertices are created at the center of each face, and at the midpoint of each edge. The new vertices are connected to their nearby vertices creating quads.  Each subsequent level works exclusively with quads as every polygon following these rules will result in quads.
+
+--14b-- File 48
+Then, the old vertices are adjusted according to the formula shown here. This smoothes out each subsequent subdivision level, but still retains much of the shape of the control mesh.
+
+The only disadvantage to this method is the shear number of vertices created at each subdivision level. The redeeming factor is that the smoothing operation is so good, that you normally don't need too many levels to obtain a desireable result.
+
+We will discuss some more implementation details in the next video.
+
+--15-- File 49
+The images here show a classic example of the power of the Catmull-Clark subdivision method.
+
+Another classic example, not shown here, is how a cube converges to a sphere with just a few subdivisions.
+
+This concludes this video.

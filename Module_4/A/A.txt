@@ -1,0 +1,79 @@
+4A: Radiosity
+
+https://hof.povray.org [POV-Ray Hall of Fame]
+https://dudka.cz/rrv/gallery [RRV - Gallery]
+https://education.siggraph.org/static/HyperGraph/radiosity/overview_1.htm [Radiosity OverView]
+
+
+--2-- File 99
+In Module 4 we will be covering radiosity and color theory.
+
+--3-- File 100
+After an overview of radiosity, we will cover some specifics of the algorithm. Even though you won't be required to implement this, it is useful to understand the theory behind radiosity, and some of the proposed solutions to implement it.
+
+--4-- File 101
+Radiosity is well known to produce some of the most realistic computer generated images to date as you can see on this slide.
+
+--5-- File 102
+Radiosity's main strength is its abilities to accurately render diffuse lighting and soft shadows in complex scenes.
+
+Notice the gradual shading changes on the walls especially close to the light sources.  The back right corner of this room is a prime example of accurately repesenting the penumbra of a shadow. Here we see the direct effects of the ceiling and desk lights on the right wall that is partially obscured by the desk.
+
+--6-- File 103
+Radiosity and ray tracing are the two major approaches to solving the global illumination problem. As I already mentioned, radiosity's strength is in modeling diffuse reflections. Ray tracing, as you know, specializes in specular reflections.
+
+The theory behind radiosity is rooted in heat transfer and conservation of energy. It is very expensive to compute.  These will become apparent as we begin to analyze the algorithm. 
+
+The basic idea is to subdivide all the objects in the scene into small surface areas called patches, then compute the reflection of the light off of these patches and onto the other patches of the scene. By nature, these calculations are independent of the viewer.
+
+As we saw from the first image in this lecture, radiosity does an excellent job of rendering the interior of buildings.
+
+--7-- File 108
+Most of the significant research in radiosity, including its origins, came out of Cornell University in the 1980s. The results were very positive. In fact, during multiple tests, people were not generally able to distinguish a radiosity-generated image from a real photograph.
+
+In addition to diffuse reflections and soft shadows, radiosity also accurately renders color bleeding, where light reflected off a colored surface influences the color reflected off of adjacent surfaces.
+
+Despite its realism, radiosity has some major disadvantages, and when compared to ray tracing, not much research has been done to improve the algorithm's efficiency.
+
+The link at the bottow of this slide is a good high-level overview of the algorithm. You may want to pause the video and review it before proceeding.
+
+--8-- File 110
+As I mentioned, in radiosity the scene geometry is divided into patches. Each patch is considered a perfect diffuser, emitter or reflector of light energy. For the sake of the algorithm, we assume that the radiosity of a patch is constant across the entire patch. This means that the accuracy of the solution depends highly on the size of the patches. Smaller patches produce more accurate results, but infer higher computational costs. Larger patch areas are highly subject to aliasing.
+
+The radiosity of a patch is defined as the total rate of energy leaving or reflected off of the patch. This is less than or equal to the sum of all the light reflected onto the patch, plus the light emitted from the patch.
+
+Light emission is only present for light sources, so for most patches the emission value is zero. That means that for most patches we need to know the light energy that reaches the patch and is subsequently reflected, or not absorbed.
+
+Much of the reflection value is determined by what is called form factors, which are the geometric relationships between the patch and all others patches. Each form factor, one for each patch in the scene, is based on the distance and orientation of the patches to each other.
+
+--9-- File 111
+The radiosity equation is seen here. This is the theoretical equation, not the formula that is used in practice.
+
+B-i is the radiosity of patch i.  dAi is the surface area of a patch.  So, the light reflected off of a surface area of a patch is equal to the light emitted from the patch surface plus all the light reflected onto the patch from all the other patches (scaled by the form factor for each patch relative to the given patch), scaled by the reflectivity of the patch.
+
+The form factor must be computed for every pair of patches in the scene. Given 'n' patches, n-squared form factors must be computed.
+
+--10-- File 112
+For the algorithm, we assume that radiosity is constant across a patch. Therefore, we can calculate these values for the center of the patches.
+
+The entire solution can be represented as a system of linear equations as shown here. The matrix elements are the form factors between all of the patches. 
+
+--11-- File 114
+Emission values will be zero for all patches except those of light sources. Also, note that this equation must be solved for each wave length, or color component.
+
+Using what we have so far, we can deduce a few properties.
+
+First, we know that the form factor between a patch and itself will always be zero if the patch is convex. In other words, if we assume planar surfaces, the radiation leaving a plane never impacts itself.
+
+Second, the form factor matrix is diagonal major, the largest values will appear on the diagonal, so a solution to the equition exists. In a practical sense, this means that light reflection reaches an equilibrium in the scene.
+
+We also know that the sum of any row of the matrix will equal one, and the solution can be solved using the Gauss-Seidel method.
+
+--12-- File 115
+We will discuss the solution to the radiosity equation in the next video, but assuming we have a solution we can now render our scene.
+
+We know that Gouraud shading, or per-vertex shading, does an adequate job rendering diffuse lighting. We can then set a diffuse term for each vertex as an average of all adjecent patch radiosities. Once this is calculated for all vertices, the scene can be rendered in real-time using our standard real-time rendering techniques.
+
+Since we already established that radiosity represents accurate interior lighting, and that once calculated, can be rendered in real time, this makes radiosity quite useful in applications like architecture modeling, where a user can simulate walkthroughs of a building's interior.
+
+This concludes this video.

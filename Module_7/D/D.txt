@@ -1,0 +1,55 @@
+7D: Subdivision Techniques
+
+https://pages.mtu.edu/~shene/COURSES/cs3621/NOTES/model/winged-e.html [The Winged-Edge Data Structure]
+
+
+--2-- File 51
+This video discusses implementation techniques for subdividing surfaces.
+
+--3-- File 53
+Subdividing surfaces involves more than just creating and updating vertex positions.  Other vertex attributes must also be considered. We already discussed normal vector calculations for the Loop and modified butterfly methods, but they use expensive trigonometry methods that may not be suitable for real time updates. A common real-time optimization for trig functions is to use a look-up table.  If performing subdivision as a preprocessing step, this is as not much of an issue.
+
+Regardless of when normals, or other attributes, are created or modified, extra storage is required.
+
+Other attributes, like texture coordinates or colors, normal interpolation and averaging following the subdivision rules of the vertex position can usually be followed.
+
+--4-- File 58
+Using our vertex and face lists is not enough to perform these subdivision techniques in a reasonable time. Directed edges, adjacent vertices, adjacent faces, and so on, can be derived from the vertex and face lists, but having additional structures to store and quickly lookup this information is desireable, and may even be necessary, especially if performing subdivision in real time.
+
+--5-- File 61
+Edge lists, vertex lists, and polygon lists typically point to each other, this is common. Edges point to their vertices, and sometimes their polygons.  Polygons point to their edges, and may point to their adjacent polygons.
+
+There is definitely room to improve efficiency, both with memory space and lookups, but some pointers and allocations just can't be avoided. I recommend being prudent with regard to the structures you create. 
+
+--6-- File 63
+A winged edge structure is packed with information including vertices, adjacent faces, preceeding and following edges, and is directed.  
+
+A vertex table has postions and pointers to connecting edges.
+
+A face table contains pointers to the edges that define the face.
+
+--7a-- File 65
+A few other topics I will mention here, but not go into detail, are piecewise subdivision, displaced subdivision, and adaptive subdivision.
+
+With piecewise subdivision, parts of the control mesh are flagged and follow different subdivision rules than the rest of the mesh. This is used to unevely smooth out the mesh, preserving hard edges and points.
+
+Displaced subdivision takes advantage of bump and displacement maps and creates a finely detailed mesh that can be rendered close to the camera.
+
+--7b-- File 67
+Adaptive subdivision is a technique performed in real-time for meshes that span so large an area that only portions of it benefit from subdivision. This is often used in terrains and allows for applications like open-world video games to render geometry accurately and seemlessly both near and far. 
+
+The text briefly discusses these and there are online resources that go into depth as well. I recommend the GPU Gems series on NVIDIA's website as well.
+
+--8-- File 69
+There are various uses for subdivision surfaces.
+
+Subdivision algorithms could save on storage space.  If the process of loading resources includes subdivision, stored information could have a smaller footprint. Plus, this enhances what features could be added when resources are loaded.
+
+Related to storage reduction is the ability to transmit data, like across the internet, in a reduced or compressed fashion. Computational load is increased, but if network transmission is a bottleneck in your application, that may be acceptable.
+
+--9-- File 72
+Of course, subdivision could be used to improve content.  Pixar, as I understand it, uses low-polygon mesh objects, then applies Catmull-Clark subdivision to define the final model.  Then, the appropriate model, whatever the level of subdivision, could be used for the appropriate purpose.
+
+If your subdivison algorithm can be used in real-time, it can be used for an adaptive level of detail. We already mentioned the terrain example, but it can be used on any mesh object.
+
+This concludes this video.

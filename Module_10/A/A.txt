@@ -1,0 +1,17 @@
+Reading:
+Foley: Sections 37.4 - k-D Trees
+
+RTR
+    Chapter 22 (16 in 3rd Edition)
+
+Ericson
+    Sections 4.2.1, 4.3.1, 4.4.1
+    Chapter 5
+
+
+--2--
+
+
+ADD Voronoi Regions
+Separating Axis Theorem
+Point-to-X 

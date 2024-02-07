@@ -1,0 +1,43 @@
+5C: Culling Techniques
+
+https://cgvr.cs.uni-bremen.de/teaching/cg_literatur/clustered_backface_culling.pdf [Clustered Backface Culling]
+
+--2-- File 38
+The remaining videos in this module cover culling techniques.
+
+--3-- File 40
+In this video, we will introduce some terminology and then discuss back-face culling.
+
+The next video will cover view-frustum culling.
+
+Then the last two will cover other culling techniques and level-of-detail selection techniques.
+
+--4a-- File 44
+The word 'cull' literally means to remove from a group or flock.  In the context of computer graphics, we use this term to refer to the removal of geometry from the graphics pipeline, or from the application processing stage before the geometry even enters the pipeline. 
+
+There are a number of established techniques to do this, which are listed here.
+
+Note that culling refers to the removal of geometry, a triangle or set of triangles. It does not refer to entire triangles or portions of triangles that get clipped between the geometry and rasterization phases of the rendering pipeline. We can always rely on the clipping phase to remove unseen geometry; which is the purpose of the clipping phase.
+
+--4b-- File 46
+The exact visible set refers to the set of triangles that will not be removed in the clipping process. You can imagine how difficult and expensive that process can be.
+
+Culling techniques aim to reduce geometry down to a potentially visible set. And, as you can reason, the smaller sets are more expensive to compute than larger sets.
+
+--5-- File 47
+You are already familiar with back-face culling. We have already used OpenGL to do this for us.
+
+This slide is just for review.
+
+--6-- File 48
+Application-based back-face culling is achieved relatively easily. Given the orientation of triangles and a few dot products, determining if a triangle is facing the camera is not expensive.
+
+However, with complex geometric meshes, where many triangles are oriented in different directions, doing backface culling in the application is usually not worth the processing power.
+
+--7-- File 49
+Again, this slide here is just for review.
+
+--8-- File 52
+There is a method of clustering primitives in a mesh, proposed by Johannsen and Carter, in which an application can determine if parts of a mesh should be sent to the graphics pipeline. It requires some preprocessing but otherwise does not increase the memory usage by too much and does increase overall performance.
+
+This concludes this video.

@@ -1,0 +1,38 @@
+7A: Procedural Modeling
+
+[no links]
+
+--2-- File 0
+In this module, we will discuss some procedural modeling techniques. This is one of my favorite topics in computer graphics.
+
+This video serves as an introducion to what we will discuss in the subsequent videos.
+
+--3-- File 1
+We will discuss the topics listed here. 
+
+We have already introduced some procedural modeling in the previous course, although we may not have labeled it as such. These include the sphere, cylinder, torus, surface of revolution, and particle systems.
+
+Procedural terrain using the diamond square algorithm was also introduced.
+
+--4-- File 3
+Some natural phenomena cannot be easily generated or rendered using the mesh objects we have mostly focused on. The vertex data of mesh objects is rigid and relatively large. Rapidly changing shapes or shapes made of objects small enough that are impossible to distinguish with the human eye, like water, smoke, clouds, etc., require different techniques than our standard meshes.
+
+Some of the these techniques can be applied to multple object types, and others are specific to just one or two cases.
+
+--5-- File 4
+Moreso than just necessity, procedural modeling is often desireable.
+
+Anything procedural, or programmatic, can be dynamic and therefore animated, and can save on memory by using algorithms instead of data. You can even involve the application user in the modeling process with interactive parameters.
+
+The disadvantages include the inability to model things artistically in real time, and procedural models tend to look formulaic, subject to the programmers' algorithms.
+
+--6-- File 7
+Here are some examples of established procedural modelling techniques.
+
+We already mentioned particle systems and terrain, and I believe you have already been introduced to blobby objects. If not we will discuss those in the next video.
+
+Fractals, fourier synthesis, subdivision, and 3D textures are all commonly used, and there are more techniques regularly introduced into the computer graphics field.
+
+This concludes this video.
+
+

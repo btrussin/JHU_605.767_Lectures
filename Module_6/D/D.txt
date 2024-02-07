@@ -1,0 +1,63 @@
+6D: B-Splines
+
+--2-- File 39
+In this video we discuss B-Splines, a more generalized curve function.
+
+--3-- File 40
+Before getting into specifics, it is worth noting some of the advantages B-splines have over Bezier curves. 
+
+As mentioned in the previous video, a change to one of the control points of the Bezier curve affects the entire curve. B-splines are piece-wise curves and every piece of the curve is only influenced by the control points that surround it.
+
+Another advantage is that the degree of the polynomial basis functions are not dependent on the number of control points. With Bezier curves, each addition of a control point increased its degree; this is not so with B-splines; the degrees are independent of the number of control points. This allows us to create very long curves with many control points without increasing the degree. Note that the degree is related to the number of control points that directly influence any one piece of the curve.
+
+The main disadvantage of B-splines is the complexity; both to comprehend and to implement.
+
+--4a-- File 42
+Each piece of a B-spline is defined over a subinterval of the t values, so for each piece of the curve, some of the control points will contribute zero amount to that piece and others will contribute a non-zero amount.
+
+The subintervals are broken up into uniform, or non-uniform amounts, and each break in the range is called a knot. The collection of knots is referred to as a knot vector, and the knots are assumed to be non-decreasing.
+
+--4b-- File 43
+Each piece of the curve will span multiple knots, or t-values.  The number of knots for each piece of the curve is dependent on 'd', which is one more than the selected polynomial degree for the basis, or blending functions. The range of t-values for each curve piece is dependent on the number of control points, in addition to 'd'.
+
+Note that 'd' cannot be less than 2 or greater than the number of control points. And 'd' is typically 4, giving us cubic functions.
+
+--5-- File 44
+Listed here and on the next slide are propeties of B-splines. I will just mention a few.
+
+'D' is chosen to be one more than our desired polynomial degree. Therefore the B-spline exhibits d-minus-2 continuity.  
+
+There are many blending functions that need to be defined. And each one is defined over d subintervals corresponding to the pieces of the curve. Some of these blending functions will be zero, depending on the t-value and the piece of the curve being evaluated.
+
+Each piece of the curve is influence by 'd' control points.
+
+--6-- File 47
+A control point only has local control, influencing at most 'd' pieces of the curve.
+
+Like Bezier curves, B-splines are constrained to within the convex hull of the control points.
+
+--7-- File 48
+The basis, or blending functions are recursive functions defined by the Cox-deBoor formula. Don't let this complex-looking equation fool you, it is actually quite simple.
+
+You may notice that for each sample of the curve, some of the these values will be re-computed. An optimization would store a lookup table and only compute the value if it has not yet been computed.
+
+--8-- File 51
+Uniform B-splines have evenly spaced knots. Typically the knots are defined between zero and one, or at integer values. The t-values get scaled by the overall range, so your choice of knots does not really matter.
+
+The blending functions themselves are often plotted as curves to give students an idea of how the various control points are combined. You can see examples of these blending function plots in just about any text that covers B-splines. I find them useful and recommend you do some research on your own, if you want to better understand how these work.
+
+--9-- File 55
+Cubic B-splines have a d-value of 4, meaning that the polynomials of the basis functions have degree of 3. This is the most common case.
+
+With a d-value of 4, each piece of the curve will be influenced by 4 control points.  This is almost like a chain of cubic Bezier curves, but not quite.  One of the main differences is that cubic B-splines have C2 continuity throughout the entire curve, whereas joined bezier curves do not necssarily have that property.
+
+Listed here are the blending functions for a cubic B-spline. They are not the same as the basis functions for cubic Bezier curves.
+
+--10-- File 56
+For 'n' plus 1 control points, from p-zero to p-n, we will get n-2 curve segments, labeled Q3 to Qn. And each segment will be influenced by 4 control points.
+
+One major disadvantage to B-splines is the fact that the curve does not pass through any of the control points, not even the beginning or end points, unless you repeat some of the control points. This, however, breaks some of the continuity properties that we gain.
+
+We will offer a solution to this using non-uniform B-splines next.
+
+This concludes this video.

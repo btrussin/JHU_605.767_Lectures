@@ -1,0 +1,72 @@
+5B: Bi-Spatial Partitioning
+
+https://www.gamedeveloper.com/programming/octree-partitioning-techniques [Octree Partitioning Techniques]
+https://web.cs.wpi.edu/~matt/courses/cs563/talks/bsp/document.html [BSP Tree Generation]
+
+
+--2-- File 17
+In this video we will discuss spatial subdivisions. These are more nuanced than bounding volume hierarchies giving us different advantages and disadvantages.
+
+--3-- File 21
+Spatial subdivisions represent all space or a specifically bound space, not just occupied space. The smallest unit of space is usually referred to as a voxel, short for volume-pixel.
+
+Depending on the smallest volume of space you need to represent, having a voxel for every possible location could require an excessive amount of memory. Quadtrees and octrees address that concern without any information loss.
+
+Spatial subdivisions are often used in a variety of ways. They are used in volume-based rendering such as 3D imaging, for example in medical fields, and in metamorphic rendering such as the marching cubes algorithm.  They are also used for collision testing, like in ray tracing.
+
+--4-- File 22
+A quadtree is used in 2-dimensional spaces, and divides the space into evenly-sized rectangular regions. Nodes at each level of the tree have equal sizes, and children are only present if they are needed. This can save on memory usage but does not account for differently sized objects so bounding volumes may still be needed.
+
+--5-- File 23
+An octree is the same as a quadtree, but includes a third dimension.
+
+--6-- File 25
+The construction of an octree is straight-forward. Enclose the scene in an axis-aligned bounding box and then subdivide along the principle axes until there is either no geometry in the box, or you have reached some other condition, like minimum box size, or a certain number of elements contained inside. Finally, you bind objects to box elements.
+
+The process is the same for 2-dimensional quadtrees.
+
+If an object occupies, or overlaps more than one box, there are a number of ways to account for this, many suggestions are listed here. They include options from splitting the object to fit into the boxes (which can be quite expensive), or storing the object at the highest level of the tree such that it is enclosed entirely, or loosening the box size to account for the object's size.
+
+--7-- File 27
+A k-D tree, or k-dimensional tree, is a generalized version of a quadtree or octree. The main difference is that instead of regularly iterating through the dimensions, X-Y-Z, X-Y-Z, etc. as in an octree, in k-d tree construction, you can choose the best dimension for your next subdivision. This leads to a more balanced distribution of data in the structure.
+
+As a result, searching for data in a k-d tree can be much faster than searching in a strict quad or octree.
+
+--8-- File 28
+Bi-spatial partitions loosen the constraint of having equally sized subregions. This allows for optimized query times since we can create a balanced binary tree.
+
+How to divide the space varies. Two common methods are to divide along the primary axes or divide along a plane (or line, if in 2 dimensions) corresponding to a face (or edge) of the polyhedron (or polygon).
+
+The polygon-aligned option will produce a tighter fit.
+
+--9-- File 30
+Forming an axis-aligned bi-spatial partition is an exercise in sorting objects along the principal axes and placing bounding planes (or lines in 2 dimensions) such that they divide the objects evenly. Alternate axes and further sub-divide the space until you have reached some criteria.
+
+--10-- File 32
+Deciding how to choose on which axis to place the next subdivided plane can follow a strict rule, or adapt to the distribution of the objects in the space. This may lead to uneven spacing, but the tree structure can still be balanced and support optimized queries.
+
+A full and balanced tree is useful for sorting, culling techniques, collisions, and so forth.
+
+--11-- File 33
+A polygon-aligned BSP tree chooses planes along the faces of the geometry instead of the principal axes, but is otherwise similar. The same problem exists where geometry can overlap more than one region and sub-spaces may still be quite uneven.
+
+Since the polygon-aligned approach produces a tight fit around the geometry, it is more expensive to compute as more queries are needed to find the best dividing planes.
+
+--12-- File 35
+Here are a couple of examples of good and bad decisions for constucting a balanced BSP tree.
+
+I recommend you take a few minutes to compare the images on the left to the resulting trees on the right.
+
+--13-- File 36
+Sorting spatial objects can become expensive, and a well-structured, well-balanced BSP tree can optimize the process. For example, sorting from back to front to implement the painter's method becomes feasible.
+
+If the scene is static, a pre-processed tree can be used to quickly determine many different spatial relationships among the objects.
+
+--14-- File 37
+The relationships between planes and other geometric objects are simple which makes traversing a BSP tree relatively easy.
+
+Testing what parts of the scene are visible, either entirely or partailly, depends on the camera's position and orientation. Testing the region of the BSP in which the camera position lies is a matter of solving multiple plane equations, as well as what parts of the scene are visible from that vantage point.
+
+I've included some psuedocode for traversing a BSP tree for reference.
+
+This concludes this video.

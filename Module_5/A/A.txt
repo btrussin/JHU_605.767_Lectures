@@ -1,0 +1,71 @@
+
+5A: Spatial Data Structures
+
+http://graphics.stanford.edu/projects/volume/ [Volume rendering]
+
+--2-- File 1
+In module five we will be focusing on some geometric optimizations by examining the use and benefits of spatial data structures and drawing optimizations such as culling, and varying levels of detail of geometric models.
+
+This video will focus primarily on spatial data structures.
+
+--3-- File 3
+The topics we will discuss in this video and in the next are octrees, bounding volume hierarchies, bi-spatial partitions, and scene graphs.
+
+--4-- File 5
+Haines and Moller describe four goals that we are trying to achieve in computer graphics applications. 
+
+An increase frame rate leads to a more realistic interactive experience with our application. This requires a high-enough rate that the user feels like the application responds in real time. This usually requires at least 60 frames per second, but may require more. For example, virtual reality applications require an even higher frame rate to achieve realism.
+
+A higher resolution of the output image, additional geometry sampling, or both, leads to increased image quality.
+
+More realistic materials and lighting are increasingly higher in demand.
+
+Increased scene complexity, both with more models and models with higher detail, also leads to more realism.  Note that this is not the same as an increase in resolution. Scene complexity puts a demand on the vertex shader, and resolution puts a demand on the fragment shader.
+
+Despite the advances in machine hardware, optimization and acceleration techniques may forever be needed.
+
+--5-- File 6
+Our modeling thus far has been relatively simple. With a variety of techniques, we can achieve more advanced effects.
+
+The image that you see here was not produced with simple geometry. With some advanced spatial data structures and organizing our data in creative ways, we can sample and render geometry to extract information that is beyond just the surface of a model, or its triangle mesh.
+
+--6-- File 7
+A spatial data structure, as the name suggests, organizes data in space. This can be in any number of dimensions, but for computer graphics, we are mainly concerned with 2 and 3 dimensional spaces.
+
+Units of the structures represent space, and if organized properly, can be used to quickly query and determine intersections, distances, and any other spatially-dependent information.  
+
+Most structures use a tree graph and some binary partitioning that enables querying as fast as log-of-N time. 
+
+And these are usually computed during a preprocessing stage.
+
+--7-- File 9
+The examples listed here have advantages and disadvantages depending on the intended use.  
+
+Bounding volume hierarchies will be discussed on the next two slides. Octrees and BSPs will be discussed in the next video.
+
+There are high-level and low-level differences between these different approaches.  At a high level, different approaches divide the space differently.  At a low level, different structures occupy memory differenty. For example, linked nodes that use pointers versus arrays that use addresses in contiguous memory.
+
+--8-- File 13
+Bounding volume hierarchies are somewhat generic and easy to form.  They are good for some culling techniques, as we will discuss later in this module, and collision detections, but not normally optimal for searching.
+
+Collision tests are probably where bounding volumes are most used and most useful. We have already established that collision testing is expensive, so early-out conditions can greatly speed up an application, especially if you can avoid testing against many objects with a simple collision test.
+
+Bounding volumes do not get rendered, although some game engines and gaming companies will render wireframes around bounding volumes for testing and debugging purposes.
+
+The structure is a simple directed, acyclic graph, with no strict emphasis on balancing or performance. The only assumption is that children are fully enclosed (geometrically) within their parents.
+
+--9-- File 15
+BV hierarchies are generally created as the scene is being loaded, or for very complex scenes, can be computed and stored offline for even faster construction at load time.
+
+The structures can be static or dynamic. If it's dynamic, adjustments to the structure can be performed relatively easily, given your collision tests between various bounding volumes is sufficiently fast and robust.
+
+Bounding volumes don't always need to wrap geometry, they can be used for movement contraints and event triggers.
+
+And, like I mentioned, bounding volume hierarchies are very generic, but that also makes them useful for many purposes.
+
+--10-- File 16
+Creating and updating bounding volumes can also be done directly in the scene graph, as nodes can have bounding volumes attached to them. Keep in mind that you can have a single graph that handles drawing, geometry intersections, and many other things, or you can have different graphs that have distinct purposes.
+
+An effective way to compute and update bounding volumes and hierarchies is to update the BV's as you traverse the graph downward, then update and merge bounding volume groups as you traverse back up. Having this algorithm in your library can then be used for dynamically updating bounding volumes and hierarchies in real time. 
+
+This concludes this video.
