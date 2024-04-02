@@ -1,17 +1,95 @@
-Reading:
-Foley: Sections 37.4 - k-D Trees
-
-RTR
-    Chapter 22 (16 in 3rd Edition)
-
-Ericson
-    Sections 4.2.1, 4.3.1, 4.4.1
-    Chapter 5
+https://inria.hal.science/inria-00072100/document [Faster Triangle-Triangle Intersection Tests]
 
 
---2--
+{de-víl-ee} {geeg} (like geek) 
 
+--2-- File 32
+In this video, we cover just a few intersection cases involving rays, triangles and planes.
 
-ADD Voronoi Regions
-Separating Axis Theorem
-Point-to-X 
+--3a-- File 39
+We have already discussed ray intersections extensively related to ray tracing. Ray intersections in real-time are also useful. 
+
+Many collision tests can be simplified as ray-to-bounding volume tests. We saw this in the previous course intersecting two spheres, where we combined the radii of the spheres into one sphere and performed a point/sphere intersection test.
+
+--3b-- File 42
+Rays can also be used as simple parts of more-complicated objects. Consider a car intersecting with a ground mesh. As the car has four wheels, and each wheel can intersect a different part of the mesh, we can perform four seperate ray/mesh intersections to position the wheels in their proper places. The car's orientation relative to the ground surface can then be calculated using the positions of the four wheels.
+
+Many other complex collision scenarios can be simplified like this.
+
+--4-- File 45
+Fast triangle intersection tests are necessary for any robust geometry system. This makes sense since our objects are eventually broken into triangles for rendering.
+
+There are multiple good, established methods for doing this, including the brute force method, Martin Held's method in his ERIT library, and the highly efficient, but complicated method proposed by Devillers and Guigue.
+
+But first, let's make sure we understand the problem and some common techniques that are often used in the various algorithms.
+
+--5-- File 47
+A triangle consists of three points, either in two or three dimensions. If in three dimensions, three points define a plane, so every triangle is in a single plane.
+
+A commonly-used trivial rejection case for triangle intersections is to apply the separating axis theorem using a triangle's plane.  If the other triangle is entirely above or below the plane, no intersection occurs and the test is complete.
+
+--6a-- File 48
+In the event that two 3D triangles are co-planar, the test can be reduced to two dimensions.
+
+The 2D triangle intersection test checks line segment overlaps, which is sufficient unless one triangle is entirely enclosed in the other. 
+
+The line segment overlap test is simple enough and the test for points inside a triangle can be performed by examining the barycentric coordinates of the point in relation to the triangle. 
+
+You can find the barycentric coordinates of the point by solving for u and v in the equation shown on this slide.  This breaks down into a 2-by-3 system of linear equations. The point is inside the triangle if u and v are both positive and u-plus-v does not exceed 1.
+
+--6b-- File 50
+The only trick to this is determining on which plane to perform the 2D test.  A suitable option is an axis-aligned plane which maximizes the triangles' prejected areas. This corresponds to the largest dimension of the triangle's normal vector. 
+
+For example, if the normal vector is greatest in the positive or negative x-direction, then you would project the problem onto the y-z plane.
+
+--7-- File 51
+Many algorithms use the line-segment plane intersection method, so I describe it here.
+
+Given the point-normal plane equation, the distances of the line segment end points are computed and compared. If both are on the same side of the plane, no intersection occurs.  
+
+Otherwise, the point of intersection is calculated using the equation shown on this slide.
+
+--8-- File 54
+The brute force method for computing the intersection of two triangles requires six iterations. You simply check if each line segment of one triangle intersects the other triangle.
+
+Because this only requires six iterations, if you add the separating plane test before the line segment tests, this performs nearly as well as the other methods we will present next.
+
+--9-- File 56
+The interval overlap method first performs the separating axis tests using the triangles' planes. Next, if the planes are not parallel, it uses the intersection of the two planes which forms a line. The principle here is to compute the points on that line that each triangle intersects and check if they overlap.
+
+--10-- File 57
+This image shows the two cases where the triangles intersect, or do not.  You can clearly see that the line segments intersect in the case on the left, but not in the case on the right.
+
+This method requires algorithms that compute the line defined by two intersecting planes, and the intersections of a 3D line with a 3D line segment. And, of course, a way to determine the overlap along the line.
+
+--11-- File 61
+The intersection points could be computed using the line-segment/plane intersection presented earlier. 
+
+Then, to compute the intervals, you can treat the line as a vector N and take the dot products of the intersection points with N, which represent the distances along the line from the origin. 
+
+The triangles intersect if the distances overlap.
+
+--12a-- File 62
+Devillers and Guigue propose an optimization to the inverval overlap method using a trick called the screw test. The text discusses this somewhat. 
+
+The screw test describes a relationship between two line segments. It treats one line segment as a vector and the determines if the rotation around that vector is in the same direction as going from the start to the end of the other line segment.
+
+--12b-- File 63
+The screw test, mathematically, is the determinant of the 4-by-4 matrix with the columns or rows set as the homogeneous line-segment end points.  The test becomes very simple, fast, and reliable, but only if the triangles are in a particular format; specifically if the first point of the triangle is above the plane of the other triangle, and the other two points are below. 
+
+The main disadvantage to this method is the complex logic required to rearrange the triangles such that they meet all the required conditions.
+
+If you do get it right, however, it is faster than every other method; at least according to my testing.
+
+--13a-- File 66
+The last method we discuss is by Martin Held, implemented in his ERIT library. It is mostly a combination of other simpler methods, performs almost as well as Devillers and Guigue's method, but is much easier to understand and implement.
+
+It starts by computing the plane of Triangle 1, and exiting if triangle 2 is above or below it. This is only half of the separating axis test.
+
+--13b-- File 67
+Next, if the triangles are coplanar, it returns the result of the coplanar test.
+
+Finally, it computes the intersection of Triangle 2 with Plane 1, which results in a line segment on plane 1, and tests if that line segment intersects or is wholly contained in Triangle 1.
+
+This concludes this video.
+

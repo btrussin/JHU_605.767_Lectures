@@ -1,0 +1,107 @@
+http://media.steampowered.com/apps/steamdevdays/slides/beyondporting.pdf [[Beyond Porting]]
+
+https://web.tecgraf.puc-rio.br/~ismael/Cursos/Cidade_CG/labs/OpenGL/OpenGL_siggraph1998/node244.html
+[[Finding Depth Complexity with the Stencil Buffer]]
+
+--2-- File 0
+In this video, we discuss methods to remove bottlenecks and otherwise increase performance in the various stages of our applications.
+
+--3-- File 3
+In these day with powerful GPUs, most often our computer graphics applications are CPU-limited. In order to fix this, the first recommendation is to try different compiler optimization flags. Compilers can do a great job of optimization, and proper compiler settings can usually improve performance significantly. 
+
+If compiler optimizations do not get your application the performance it needs then you may need to use code profiling tools like Intel’s Vtune or a tool like Quantify which can be useful to find code hot spots or places where the code spends a lot of time. Then you can focus on examining the problem algorithms and trying alternatives to see if improvements can be made.
+
+--4a-- File 7
+The Real Time Rendering text has many other possible code improvements to try. Making use of Single Instruction Multiple Data, or SIMD, instruction sets can be helpful, especially for vector and matrix operations.
+
+You should try to avoid extra divisions in code. Depending on CPU architectures a division can take many times longer than other instructions.
+
+--4b-- File 9
+You may want to unroll small loops to see if performance improves – an example of this is in the matrix multiplication method in the lab code. Some compiler optimizers may do this for you in some cases and you need to be careful to make sure the increase in code size doesn’t degrade memory and caching performance.
+
+Structure alignment can impact performance on some architectures so making sure structures align to 32 or 64 byte boundaries can sometimes impact performance and caching. Tools like cacheprof can be helpful in finding caching and memory issues. 
+
+We have already mentioned several times trying to avoid expensive math methods like trig functions pow, and sqrt where possible.
+
+--5a-- File 11
+Inline methods can improve performance as they replace a function call with the function's instructions. However, compilers have been known to ignore the inline suggestion.
+
+Using lower precision floating point methods and making sure all computations remain in floating point precision can also be helpful. Keep in mind that some functions default to double precision and may cast a single-presicion float value to a double for the calculation, then cast it back to a float upon return. Always check the specifications, especially if you have doubts.
+
+When storing data in GPUs, try to use lower precision when possible to lessen the data size sent to the GPU and stored within the VBOs.
+
+--5b-- File 12
+Two common C++ practices are to use const where possible to help with compiler optimization and to pass objects by reference rather than by value. C++ versions 11 and above also have many features to help avoid unnecessary copying of objects.
+
+Also, and this is not known well-enough, you should elect to use pre-increment instead of post-increment, unless you need a copy of the value. Post-increment creates a copy of the value before incrementing it, whereas pre-increment does not. The same is true for the equivalent decrement functions.
+
+--6-- File 13
+Another factor with code performance is how memory is used and accessed. Different organization of data and structures can change performance and often it is best to try different possibilities and see which performs best.
+
+In robotics companies, I have seen a shift away from using STL data structures like the std::vectors we use in our lab code. Those structures are written to handle general data-types and proprietary data structures can perform much better when written specifically for your own data-types. 
+
+Heap memory allocation is notoriously slow, and is also prone to memory leaks if pointers aren't managed properly. The alternative is to use stack memory, or allocate a large pool of heap memory and manage it yourself. In any case, be careful to use memory allocation wisely.
+
+--7a-- File 16
+Graphics API calls can also slow down the application. These depend on a number of factors including the graphics card drivers and the number and types of GPU resources in play. And every draw call has some overhead associated with it. So much so that there is a practical limit to the number of draws calls you can make each frame. This used to be a real issue, but is not so much now as graphics cards, drivers, and graphics APIs have improved.
+
+Graphics pipelines manage states and OpenGL is essentially a state machine. For this reason, there is a cost associated with switching from one state to another, and some state changes are much more expensive than others.
+
+--7b-- File 17
+Our scene graphs, if properly organized, will mitigate much of these costs. State change costs are specific to different hardware configurations and graphics APIs, but there are some generally observed behaviors.
+
+Listed on this slide is an ordering of most expensive to least expensive state changes. Obviously the most expensive changes should occur less frequently, performed in scene graph nodes near the top of the tree.
+
+--8a-- File 20
+Here are several suggestions for optimizing the geometry stage. 
+
+Connected primitives, like triangle strips, are faster that just vertex arrays, in addition to being more memory efficient. 
+
+However, using indexed arrays is the fasted, most efficient way to provide data to the geometry stage and indexed primitives usually have operations more efficiently performed by the GPU.
+
+--8b-- File 22
+Indexed primitives allow the GPU to eliminate multiple executions of the vertex shader for vertices among shared triangles. With a vertex list, the GPU has no reliable method to know if two vertices are the same, even if they have the same exact data.
+
+Also, you should reduce the number of small batches. It is very inefficient to call a large number of triangle strips for example. It is much more efficient if you can connect them together with degenerate edges and create a single call with a much larger number of vertices. 
+
+There are also compressed forms of vertex data that can be useful for large models where VBO memory use might be an issue.
+
+--9-- File 23
+Lighting can be expensive whether done in the vertex shader or the fragment shader. There are pros and cons of lighting in either shader and there are ways to split the computational load between the 2 shaders if the fragment shader work becomes too much and the application becomes fill limited.
+
+This slide recalls some of the efficiency considerations of lighting – things like directional lights are more efficient than point light sources which are more efficient than spotlights. If lighting is too complex, such that your application performance suffers, you may need to sacrifice quality and improve performance by reducing the number of light sources or making changes to certain settings.
+
+--10-- File 25
+Another common practice to improve lighting performance is to compute the lighting off-line and embed the results either in a color per-vertex or within textures or lightmaps. This type of off-line lighting computation embedded within the scene models is often called pre-shaded, prelit, or baked lighting – the lighting effects are baked into the objects and the scene such that on the fly, lighting computations are minimized.
+
+--11-- File 27
+Several optimizations to the rasterization stage are possible. Back-face culling is standard. It often reduces the number of triangles sent to the rasterization subsystem. There are also times when the depth buffer can be disabled – especially right after clearing the framebuffer and drawing the initial background image.
+
+Textures and texture filtering can produce a heavy computational load on the rasterization subsystem. Large textures can impact caching and memory access. Some internal texture formats are expensive, they can save space but cost more to access. You can try different texture filtering on some objects to see if you can get by without using the most expensive texture filtering all the time. 
+
+--12-- File 28
+I mentioned depth complexity in the first video of this module. It can be useful in analyzing the strain on the pixel processing stage.
+
+Listed here is a reference to computing the depth complexity of your scene using the stencil buffer.
+
+--13-- File 33
+There are several overall optimization techniques and practices. In general, reducing the number of triangles and lines within each scene will improve performance.
+
+Level of detail selection can improve efficiency for some models.
+
+Culling techniques like view frustum culling are important when processing a large, complex scene.
+
+Object models should be pre-processed and optimized prior to rendering – you do not want to do unnecessary work while drawing the scene so any tessellation of complex models should be done in advance.
+
+Turning off features not in use like blending is recommended. 
+
+And you should the check hardware architecture to see if there are recommended configurations to boost efficiency.
+
+--14-- File 35
+Minimizing state changes and grouping primitives with similar attributions like texture, material, and transparency all together is helpful, like has already been discussed.
+
+glGet can provide useful information about the OpenGL implementation and capabilities, but these calls can be expensive. It is always best to make queries to OpenGL during application setup and not during scene rendering.
+
+You may also want to minimize switching between 2D and 3D operations, avoid reading from the frame buffer, expecially in-frame, and multiple rendering passes if multi-texturing can produce the same result.
+
+This concludes this video.

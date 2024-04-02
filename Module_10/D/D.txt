@@ -1,0 +1,50 @@
+--2-- File 84
+This last video in this module covers some of the problems and solutions with dynamic intersections, the intersections of moving objects.
+
+--3a-- File 85
+This slide and the next mention a number of concepts that must be considered when performing dynamic intersection tests.
+
+Discrete collision tests performed once per frame are not sufficient for some moving objects. If an object is moving at a high velocoty, our collision test may miss a collision if the objects are not overlapping at the time of the test. This is sometimes called quantum tunneling. The graphic at the bottom-left of the slide shows an example of this.
+
+--3b-- File 88
+To catch the collision, you could sample more discrete times in between frames, but that increases computational costs and still may miss the collision.
+
+The best solution is to wrap the bounding volume positions of the two frames in another volume and check for a collsion. Additional calculations are required to get the exact time and poing of impact, but at least you don't miss the collision.
+
+--4-- File 90
+Spheres are the fastest and easiest dynamic tests, so an option for a more complex object may be to represent it as a system of sphere and perform the dynamic tests on them instead of the whole object.
+
+Testing a moving object with a stationary object is difficult enough, and testing with two moving objects is even more difficult.  A common technique for this is to compute the relative motion between the objects. You add the motion to one object and treat the other as stationary. There is an example of this using two moving sphere in a few slides.
+
+--5-- File 92
+A moving sphere colliding with a stationary plane is a common scenario. The tests are simple. We first solve the plane equation for the sphere at times t and t-plus-1. If the signs of the distances are different, the sphere center passed through plane. If the signs of the distances are the same, then see if the second distance is smaller than the sphere's radius.
+
+The time and point of intersection can be computed by determining when, during the frame, the sphere's center distance was exactly the radius.
+
+We can use the sphere-swept concept and extend the planar surface along its normal by the amount of the sphere's radius and perform a ray-plane intersection test. The remaining calculations are then similar to what is outlined on this slide.
+
+--6-- File 95
+Intersecting two moving spheres is also common. If you remember, one of the assignments in the previous course required this test. This scenario is ideal for a relative motion computation.
+
+The relative motion for vector paths A and B, in relation to A is Vector V-A minus Vector V-B. See in the middle image on this slide vector V-AB. Then we add the radius of Sphere A to Sphere B and test the ray starting at the center of A, in the direction of Vector V-AB, intersecting the combined spheres at the center of Sphere B.  And we already have a solution to the ray/sphere intersection problem.
+
+An alternative solution was proposed in the 3rd Edition of the text, but oddly omitted from the fourth edition, that does not require a square root operation.  The steps are outlined here, but essentially uses a quadratic formula approach.
+
+--7-- File 98
+A sphere/polygon test is slightly more involved than a sphere/plane test, but is not too difficult.  This is also omitted from the fourth edition of the text but is contained in the 3rd edition as well as Ericson's Real Time Collision Detection text.
+
+If the sphere intersects the polygon's plane, you can determine the point of intersection and perform a point-in-polygon test. 
+
+This alone is not sufficient as the sphere can still intersect one of the polygon's edges. To capture that case, you can use the sphere-swept polygon concept and intersect a ray or point with a capsule, which is a sphere-swept line segment.
+
+--8a-- File 102
+Finally, this slide outlines bounding volume hierarchy tests as applied to individual models. I previously mentioned that complex models can be represented using a number of bounding volumes for collision purposes. You can also do this as a BV hierarchy where smaller volumes wrap portions of the model to finer, more exact tests.
+
+This is omitted from the fourth edition of the text as well, but a similar description is in Ericson's text.
+
+--8b-- File 103
+To consider the appropriate bounding volumes and heirarchies to use, a cost function can be applied. This function analyzes the number of tests, the number of primitives, the computational cost of the intersection tests, and so forth.
+
+We have only scratched the surface of collision handling in this module and an entire course can be dedicated to this. I highly recommend Ericson's text if you are interested in further studies, but it is not comprehensive and does not always describe the best algorithms. It is an area of active research.
+
+This concludes this video.

@@ -1,0 +1,80 @@
+REDO Slide 3
+
+
+https://docs.nvidia.com [[NVIDIA Docs]]
+
+
+--2-- File 123
+In this video, we discuss the different stages of our graphics applications and how to locate bottlenecks. The next video will cover methods to eliminate bottlenecks, once they have been located.
+
+--3-- File 124
+Much of this information on optimization is derived from the Real-Time Rendering book by Haines, Moller, and Hoffman. The chapter on pipeline optimization is highly recommended. It offers many approaches for improving the performance of a computer graphics application. You can also find valuable information on-line from places like NVIDIA tutorials and presentations.
+
+The key point when dealing with a pipeline architecture is that to improve performance you need to find and eliminate bottlenecks, or places in the pipeline that cannot process their required tasks quickly enough and thus they slow down the rest of the pipeline. 
+
+Bottlenecks generally vary over the course of scene rendering, at various times different stages of the pipeline are overworked and others are blocked or starved for work. The key is to find where the bottleneck resides the majority of the time, and then to take steps to improve performance of that stage or lower the amount of work required in that stage.
+
+
+--4a-- File 127
+The first potential bottleneck is in the application stage. Here the application is CPU-limited or the bus or data transfer between the CPU and the GPU is the limit. Basically the application is not getting data or rendering commands to the GPU fast enough.
+
+Application bottlenecks are often related to how data is stored – there may be inefficient access methods. Other possibilities are that non-graphics related processing may be using too much computer resources and there is not enough CPU to consistently update the scene fast enough.
+
+Bottlenecks on the GPU indicate either the geometry stage or pixel processing stage is the bottleneck.
+
+--4b-- File 133
+If the geometry stage is the bottleneck, we call this geometry-limited. Rendering performance is limited by the geometry processing, typically the large amount of work to transform and clip all of the graphics primitives. Often this indicates that the vertex shader may be too complex and is doing too much work per-vertex or that objects have too many triangles.
+
+If the rasterization, pixel processing, or merging stage is the bottleneck, we call this raster- or fill-limited. This often occurs when there are large triangles with complex per-pixel operations such as lighting, blending, or texture filtering. Here we often focus on reducing the complexity and work done in the fragment shader.
+
+--5-- File 138
+Graphics performance is measured in frames per second – how many times the graphics scene can be rendered per second. This measurement can be misleading for several reasons, and we will see one example why on the next slide.
+
+With double buffering, we can have one buffer passing data to the display controller while drawing to the other. Passing information to the display controller happens at most once per display refresh. If it takes longer to render the scene than the time in between refreshes, then the application waits.
+
+For this reason, we are limited to a scan rate of the refresh rate over an integer n. So a refresh rate of 72 Hertz is limited to 72, 36, 24, etc.
+
+--6-- File 142
+While measuring the rendering speed, it is best to use a single buffered system so that processes beyond our control, like swapping buffers, do not influence our results.
+
+Keep in mind that the frames-per-second measurement can be misleading. Consider the following example. 
+
+Let's say we get three measurements of 50, 50, and 20 frames per second.  This averages to 40 frames per second, but this is not correct.
+
+A frame rendered at 50 FPS draws in 20 milliseconds and a frame rendered at 20 FPS draws in 50 milliseconds. The average is 30 milliseconds per frame, or 33.3 frames per second.
+
+--7-- File 144
+The application stage, our C++ code and execution, consists of the elements entirely processed using the CPU using system memory, and the graphics API calls that pass information to the GPU in the form of data and draw calls.
+
+Although both are controlled by you the application developer, there are different techniques to analyze and optimize them.
+
+--8-- File 147
+Now that we have some context, let's discuss optimization techniques.
+
+The general, recommended process for optimizing performance of a graphics application is to first locate a bottleneck, then perform some optimization on the bottleneck stage, check performance and repeat the first step to see if the bottleneck has changed.
+
+Note that you don’t want to over-optimize or spend too much time on step 2. You can spend a lot of time optimizing and then when retesting you might find that the bottleneck has moved to another stage and performance has not been improved by very much.
+
+--9-- File 148
+It can be tricky to find the bottleneck stage, there is no easy way that a stage can be timed. When measuring frame rate you are timing the entire process, all stages together, so the actual timing does nothing to tell you which stage is the bottleneck.
+
+The trick is to set up specific tests that impact a single stage at a time – if rendering time or frame rate changes then you can be confident you have isolated the bottleneck. These tests often disable or reduce workload in one stage and if the frame rate improves then that stage is the bottleneck. Conversely, you can reduce workload in other stages and if performance does not change then the unaltered stage is the bottleneck.
+
+--10-- File 149
+Testing the application stage can be tricky but often using utilities like 'top' or 'osview' or on Windows, the Windows task manager, you can tell you if your application is spending a lot of CPU time. As the CPU usage approaches 100%, the likelihood increases that the application stage is the bottleneck.
+
+Another common approach, though it takes some coding effort, is to use what is called a null driver that accepts graphics calls but does not send them to the GPU. It takes some effort to set this up but it can tell you how fast the application can run.
+
+However, this approach can hide the bottleneck if there is a lot of data transfer between the CPU and GPU.
+
+--11-- File 151
+Testing the geometry stage is difficult as changes to geometry can impact the load in other stages as well. If the vertex shader is doing lighting computations, it is fairly easy to disable lights and see if the frame rate increases. If so, that tells you that the geometry stage is the bottleneck.
+
+Alternatively, you can add light sources or use more expensive light sources such as spotlights and if performance does not change then the geometry stage is not the bottleneck.
+
+Other options are to increase or decrease the vertex attributes, and increase or decrease the logic in the vertex shader and see how performance is impacted.  Adding logic to the vertex shader can get optimized away if it has no impact on the output, so keep that in mind if you attempt it.
+
+--12-- File 152
+Testing the rasterization stage is the easiest: you can simply decrease the size of the window or viewport. The same workload is kept in the application stage and geometry stage but triangles become smaller in terms of the number of pixels within each triangle. This leads to less texture access, depth buffer tests, and less number of times the fragment shader is called. So if you reduce the window size and the frame rate increases then the application is fill-limited and the pixel processing is the bottleneck.
+
+This concludes this video.

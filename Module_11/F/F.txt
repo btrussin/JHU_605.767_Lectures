@@ -1,0 +1,26 @@
+--2-- File 72
+This short video is an overview of GPU architecture and its evolution. The next two videos will discuss some specifics.
+
+--3-- File 73
+Graphics systems architectures are different from normal computer architectures. They are designed to perform very specific tasks and perform them very quickly. The triangle rasterization algorithm, which has become standard, is easily pipelined and parallelized. This fits nicely into the single-instruction multiple-data, or SIMD, framework.  You can have multiple processors all running the same set of instructions. Indeed this is required to meet the frame rate demands for our graphics applications. 
+
+In addition to the graphics hardware, a driver is required so that applications on the CPU can send data and instructions to the graphics architecture.
+
+--4-- File 75
+Modern GPUs evolved from primitive forms over the last few decades. The first accelerated parts of the modern graphics pipeline were the later stages: rasterization, texture spans, etc.
+
+Later triangle setup, part of the geometry construction stage, was added. Then eventually, some transformations and lighting calculations were accelerated.
+
+This all gave way to the fixed function pipelines in Silicon Graphics machines and others, and later supported by OpenGL and Direct3D on personal computers. This revolutionized the accessibility of graphics applications to programmers and end users.
+
+Finally, in the early 2000s, and after general rendering pipeline standards were adopted, progammable parts of the pipeline were made available, first using assembly code, then with higher-level languages like GLSL.  This is the current standard of the modern GPU, but with additional programmable sections of the pipeline and better and faster GPU hardware and firmware.
+
+--5-- File 78
+Before graphics cards on personal computers became availabe, graphics accelerations were performed on peripheral hardware, or separate computers, sometimes called graphics terminals. The Ramtek system was one of the better-known systems.
+
+These systems were managed by mainframes and were quite limited by today's standards.
+
+--6-- File 81
+Another predecessor of the modern GPU is the scan-assist architecture. This accelerated line drawing, depth testing, pixel transfers, and a few other operations. This was not anything like what we have today, but you can clearly see the priority of optimizing the latter stages of the rendering pipeline.
+
+This concludes this video.

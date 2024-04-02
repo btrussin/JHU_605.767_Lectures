@@ -1,0 +1,65 @@
+--2-- File 124
+The text covers three architecture designs, the ARM Mali G71 Bifrost, NVIDA's Pascal, and AMD GCN Vega.
+
+--3-- File 127
+First we cover the ARM Mali G71 Bifrost architecture, which I will just call Bifrost. Bifrost is targeted for mobile and embedded devices, so energy efficiency is a primary concern.
+
+This has a sort-middle design with 32 cores, or shader engines. The cores have a unified design, meaning each one can be used for vertex, fragment, or compute shading.
+
+The cores can run in parallel, and communication between the cores and the job manager is done through a common fabric.
+
+And, all memory access is through a common memory management unit.
+
+--4-- File 129
+Each core has three execution engines, each with it's own quad and 4 FMA units. FMA stands for fused-multiply-and-add, meaning that each execution engine can run 4 commands at the same time. So, for 3 execution engines with 4 FMAs each, that gives us 12 SIMD lanes per core.
+
+The quad allows a separate warp, which is similar to a thread, for each execution engine.
+
+Each core also has its own tile memory and access to other GPU memory (like vertex attributes, textures, and so on) by way of other units.
+
+--5a-- File 132
+This has a sort-middle design, so all vertices are processed and the resulting triangles (after clipping), are sorted into bins. The remainder of the pipeline can then execute the rasterization and pixel processing. This is done by bin and each bin is executed in parallel, as long as a core is available.
+
+Some other features supported by the Bifrost architecture are listed here.
+
+Pixel local storage permits the fragment shader to read from the framebuffer. This enables custom blending in the shader code and deferred shading. Deferred shading is when some of the data needed to perform expensive lighting is stored rather than executed to avoid the shading calculations that get overwritten by later fragments. Deferred shading requires multiple rendering passes.
+
+--5b-- File 133
+Transaction elimination is a feature that gives the contents of a tile a signature for the final output to the off-chip framebuffer that feeds the video display controller. If the signature of the next frame's tile is equal, no update has occurred and the output remains the same for that tile.
+
+Smart composition is similar, but for resource memory. Fetched memory blocks are cached for subsequent frames and reused if no updates to that memory have occured.
+
+--6a-- File 135
+NVIDIA's Pascal architecture was used for their GeForce GTX 1000 series, the second generation of GPUs to support Virtual Reality systems.
+
+These GPUs are broken into two parts, one for graphics processing, and the other for compute processing, or general purpose processing. We don't really discuss compute shading, or general-purpose GPU programming in these courses, but there are many tutorials and explanations online.  Search for CUDA, C-U-D-A, or OpenCL tutorials for a primer.
+
+--6b-- File 139
+The processing cores used by Pascal are unified cores with components to perform floating point and integer arithmetic. These are also know as CUDA cores by NVIDA, although I haven't seen that term used in a while. Traditionally, GPU processors only optimized floating-point arithmetic. The addition of integrated integer logic units came later.
+
+These processors are grouped into what are called streaming multiprocessors, or SMs, with a number of resources for each one. An SM can run many threads simultaneously and has a large amount of instruction capacity and L1 cache memory at its disposal.
+
+Pascal performs functions on 2-by-2 blocks of pixels, so it does some sorting and grouping to launch a local warp for vertex, primitive, pixel, or compute work.
+
+--7-- File 144
+A Polymorph engine unit was introduced in NVIDIA's Fermi architecture and performs geometry-related tasks such as vertex fetching, tessellation, simultaneous multi-projection, attribute setup, and stream output.
+
+A Polymorph engine unit coupled with a streaming multiprocessor comprises what is called a Texture Processing Cluster. And five texture processing clusters make up a Graphics Processing Cluster, or GPC.
+
+These are the basic units that make up the Pascal architecture and a GPC can be thought of as a mini-GPU.
+
+In fact, the entire architecture is scalable in such a way that adding or removing GPCs is the major difference, even if it isn't the only difference, between the various GTX 1000 series graphics cards.
+
+--8-- File 146
+The last feature that I will mention for the Pascal architecture is the tiled caching, which is a sort-of hybrid between the sort-middle and sort-last fragment designs.
+
+After the geometry processing, triangles get placed in bins based on their clip coordinates. As the bins are processed, the rasterization phase executes before the rest of the pixel processing, and the memory that holds the bins' output persists across triangles. This two-part sorting of both triangles and then fragments takes advantage of both sort-middle and sort-last fragment designs.
+
+--9-- File 152
+The text also discusses the AMD GCN Vega architecture that is used in the gaming consoles Xbox One and Playstation 4.
+
+The text was written before NVIDIA launched its line of Ray-Tracing supported graphics cards, the RTX line, but does mention some of the other efforts in accelerated real-time ray-tracing, which, as I understand, is similar to NVIDIA's efforts.
+
+Real-time ray-tracing optimizes and accelerates Bounding Volume hierarchy traversal and intersection methods. The BV hierarchy must by loaded into memory accessible by the GPU for this to be possible.
+
+This concludes this video.

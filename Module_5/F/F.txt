@@ -1,5 +1,11 @@
 5F: Level of Detail
 
+LOOK INTO
+https://www.rastergrid.com/blog/2010/10/gpu-based-dynamic-geometry-lod/
+
+
+
+LINKS
 https://graphics.stanford.edu/courses/cs248-05/real-time-programming/moller-cs248-01-lecture.pdf [Real Time Programming]
 https://www.cg.tuwien.ac.at/research/publications/1999/Fuhr-1999-Conc/TR-186-2-99-05Paper.pdf [Real-time Bounding Box Area Computation]
 

@@ -1,0 +1,28 @@
+--2-- File 36
+This video discusses ways to balance the pipeline stages.
+
+--3-- File 38
+Pipelined architectures usually employ first-in first-out queues between the different substages. 
+
+This allows a stage of the pipeline to do work even when the next stage is not yet ready or completed with the prior task. These queues help even out the work within the pipeline and help keep each stage actively doing work most of the time. However, there can be cases where a stage can be either starved or blocked.
+
+Starving occurs when the stage’s input queue is empty and it is waiting to do work. An easy example is when the application is doing work while the geometry and rasterization queues are empty. The GPU is simply waiting for things to do, it is starved for work.
+
+A stage can become blocked when the next stage’s input queue is full. The next stage is too busy to receive any new tasks so the current stage is blocked and prevented from doing further work.
+
+--4-- File 39
+Once you have determined which stage is the bottleneck, it is usually possible to add features and work to other stages without impacting the overall performance. This drawing shows the geometry stage as the bottleneck stage, the application and rasterization stages both have idle times where they are not busy. So adding some work to these stages, as shown on the bottom row of the drawing, can be done without reducing the overall frame rate.
+
+--5-- File 40
+The act of balancing the pipeline is the process of using the idle time in each stage to perform additional work. If you can add work to the application stage, you can do things like compute more realistic animations, implement more precise collision detection, or spend more time on subsystems like AI.
+
+If the geometry stage has idle time, you can do more work in the vertex shaders, perhaps more extensive lighting computations, fog, or perhaps transferring parts of the lighting computation from the fragment shader back to the vertex shader.
+
+If the rasterization stage is not the bottleneck you can do many more things with the fragment shader including lighting enhancements, pixel blending operations, fog computations, and such. You can use more expensive texture filtering where needed as well.
+
+--6-- File 42
+If an application is fill-limited, you can increase the number of triangles in object models or use higher level-of-detail models without impacting the performance of the rasterization stage.
+
+If the geometry stage is the bottleneck, you can decrease the number of triangles in object models without a large impact to the number of pixels in the rasterization process. These 2 factors are often considered by applications when determining the appropriate level of detail to use for a model.
+
+This concludes this video.

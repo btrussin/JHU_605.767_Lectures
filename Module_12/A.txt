@@ -1,0 +1,16 @@
+
+Animation:
+Eberly 5
+Watt 17
+Gregory 12
+
+
+Physics:
+Eberly 9
+Watt 17
+Gregory 13
+
+
+
+
+

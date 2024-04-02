@@ -1,0 +1,71 @@
+--2-- File 82
+In this video, we will discuss some of the pipeline methods employed by GPU architectures.
+
+--3-- File 86
+The concept of pipelines is simple. The entire process is broken up into stages, the product proceeds sequentially through the stages, and each stage runs independently of the others.  Ideally, if our pipeline was divided into 'n' stages, we would get a speed-up of factor 'n'. This ideal scenario assumes all stages take the same amount of time to complete and no latency passing from one stage to the next.
+
+In reality, the entire pipeline is restricted by its slowest stage, but the speed-up is still significant.
+
+A good example of pipelining in our graphics applications is seen at the bottom of this slide, which breaks up the geometry stage. These operations could all be performed in parallel on separate data.
+
+--4-- File 89
+Pipelining is therefore perfect for graphics processing, because pixels are independent of each other, for the most part, the order of operations is standard so memory prefetching is easy to perform, it requires mostly reads from shared memory, avoiding race conditions, and the instructions are usually rather simple.
+
+Examples of some GPU specifications are listed at the bottom of this slide. The specs are old by the time you are viewing this video, but still illustrate the point.  GPUs and their pipelined architectures are extremely fast at processing graphics compared to CPUs.
+
+--5-- File 90
+Now let's shift to parallelism and how it is achieved on GPUs.
+
+With multiple processing cores on the GPU, we can divide the work among them, but there must be a way to map these back to their intended locations.
+
+You will see the capital letters G, R, and P on the upcoming slides. These represent geometry, rasterization, and pixel processing stages respectively.
+
+--6-- File 91
+There are four different methods proposed for distribution of work and the subsequent sorting of the results. These are sort-first, sort-middle, sort-last fragment, and sort-last image.
+
+We break up the pipeline into groups of stages called units. The major architectures perform the distribution and sorting around these units.
+
+The geometry unit is everything from vertex processing to clipping. The rasterization unit creates the fragment spans within the triangles output from the clipping stage. The pixel processing unit is basically the work performed in the fragment shader.
+
+Of the four architectures, only two are practical and have been widely implemented.
+
+--7-- File 93
+The Sort-First architecture allocates processing to specific regions of the framebuffer. So, in order to get our geometry into the right set of processors, we must know which region each triangle will end up in, before we send geometry through the pipeline. A solution to this would involve sending the triangle to each region it overlaps, with some clipping on that region.
+
+For the most part, this architecture is impractical and has not been implemented on GPUs that you will find in your personal computers. However, there is value in this design for a clustered system with multiple displays.
+
+--8-- File 96
+The Sort-Middle design places triangles into bins after the geometry unit. At this point in the pipeline, we already know the screen space of the triangle, so if we divide the framebuffer into tiled regions, we can send each triangle to the regions it overlaps.
+
+This is advantageous because we can pair rasterizer and pixel processing units and map them to tiles with a dedicated framebuffer for that tile. Having a dedicated framebuffer per tile reduces latency in the reading and writing of the framebuffer.
+
+This is a commonly-used architecture and the text discusses some cases where this is implemented, at least in-part.
+
+--9-- File 97
+Sort-Last Fragment architecture is similar to sort-middle, except that only pixel-processing units are dedicated to framebuffer tiles and work can be freely distributed among both geometry units and rasterizer units.
+
+This method solves the overlap problem introduced in the sort-middle method. Some architectures use a hybrid of the sort-middle/sort-last fragment methods. We will discuss this more during the last video of this module.
+
+--10-- File 99
+The Sort-Last Image method, like the Sort-First method, is impractical for standard systems. This design sorts fragments based on their z-values. This means that every pixel-processing unit must have its own framebuffer.
+
+There are multiple issues with this design beyond the large memory requirements.  First, systems that require triangles be drawn in a specific order cannot use this architecture. Second, transparency blending is difficult as it is, so in order to perform this function using this architecture requires all partially transparent fragments be sent to all nodes, just in case they need to be considered.
+
+--11-- File 100
+The geometry unit performs specific tasks that can be optimized in hardware.  The fixed-function pipeline allowed this very easily.
+
+With the programmable shaders we use today, this is more difficult to optimize, but standard operations like matrix multiplications can still be optimized in hardware, and typically are.
+
+--12-- File 102
+Rasterization units are still very structured and implemented in hardware. Scanline algorithms and perspective correct interpolation are simple enough to optimize. This makes it enticing enough to provide micro-chips that perform just these functions very quickly.
+
+Note that some chips, for various reasons, may only support triangle rasterization. Points and lines would then be converted to quads, which are just two adjacent triangles.
+
+--13-- File 104
+The pixel processing unit is broken into programmable and fixed-function parts. The fragment shader can perform a number of instructions as we have already seen throughout this course and the previous course.
+
+However, it is preferable to put multiple operations in the hands of hardware optimizations. Such operations related to depth and stencils are configurable, but easily optimized, as well as blending operations.
+
+Texture operations can absolutely be implemented in software, but hardware-based approaches to fetching, filtering and decompression can give a speed up of up to forty times that of a software-based approach.
+
+This concludes this video.

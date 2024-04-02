@@ -1,0 +1,49 @@
+https://fileadmin.cs.lth.se/cs/Personal/Tomas_Akenine-Moller/code/tribox_tam.pdf [Fast 3D Triangle-Box Overlap Testing]
+
+https://fileadmin.cs.lth.se/cs/Personal/Tomas_Akenine-Moller/code/ [Code by Tomas Akenine-Moller]
+
+--2-- File 68
+In this video, we discuss various bounding volume intersection tests. We will be presenting only a few tests.
+
+--3-- File 69
+The intersection of a triangle and a box involves the separating axis test against 13 axes in three steps. During the algorithm, as soon as a separating axis is found, the method can return with no intersection.
+
+In the first step, you test against the axes orthogonal with the box faces. For an axis-aligned box, these are the principle axes. For an oriented box, these should already have been computed and stored with the box's data.
+
+--4-- File 70
+The second step involves the axis orthogonal to the triangle's plane. Note that the triangle projected onto this axis will be a single point.
+
+--5-- File 72
+The third step is the most involved with 9 separating axis tests. The axes chosen are the cross products of the axes from step 1 with the three edges of the triangles.
+
+--6-- File 74
+A few notes on optimization.
+
+Moller proposes that the most efficient ordering of the steps is 3-1-2, starting with cross products and ending with the triangle plane.
+
+Also, you may have observed that if the box is axis-aligned, many of the calculations result in zero and can be hard-coded rather than performing actual more-expensive cross products.
+
+--7-- File 76
+The complexity of testing a bounding volume against another depends highly on the complexity of the bounding volumes involved.  Tighter volumes better wrap the geometry, with less empty space, but require more expensive collision tests.
+
+Often I find it useful have mulitple bounding volumes attached to a single complex object. It is efficient to save expensive tests for only if less expensive tests pass first. For example, given a model of a car with both a sphere and oriented box, you skip the box intersection tests if the sphere does not intersect.
+
+--8-- File 77
+On that note, the sphere/sphere test is the simplest of all, comparing the distances of the spheres' centers to the sum of the radii.
+
+Even this can be optimized comparing squared distances instead of computing the expensive square roots.
+
+--9-- File 78
+Intersecting a sphere with an axis-aligned box is best performed by first finding the closest point on the box to the sphere's center. This is surprisingly simple for an axis aligned box, because you can compute the distances along the principle axes, then just sum the squared distances and compare that with the radius squared.
+
+You can further optimize this by checking if the distance along any axis is greater than the raidus and exit early.
+
+--10-- File 81
+The overlap of two axis-aligned boxes can just check if the minimum and maximum points overlap in any dimension.
+
+--11-- File 83
+Testing the intersection of two oriented boxes is expensive compared to the simpler bounding volume tests. This involves 15 separating axis tests and is similar to the Triangle/Box test.
+
+The axes to test are the six axes of the boxes, plus the nine vectors formed from the cross products of an axis of one box with an axis of the other. If no separating axis is found, the boxes are intersecting.
+
+This concludes this video.

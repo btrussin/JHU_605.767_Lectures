@@ -1,0 +1,82 @@
+--2-- File 43
+In this video, we discuss some specifics of display technologies and buffers.
+
+--3-- File 46
+The remaining videos in this module cover hardware-specific technologies. The computer graphics APIs that we use don't give us free access to all the hardware, and we really only need to know about buffers and memory, but having an understanding of memory transfer and bandwidth, displays, and the various ways that GPU architectures can be and are typically structured give us some insight into why some graphics functionality is faster than, and sometimes slower than, we would expect.
+
+--4-- File 48
+This diagram should not be new to you. We have already mentioned in the previous course how the graphics output stored in a framebuffer is passed to the display by way of a video controller. We will cover some specifics in the next slides, but all of the terms here should already by familiar.
+
+--5-- File 49
+The Video Display Controller transfers data from the framebuffer to the display and usually supports various standards, both analog and digital. If the data standard is analog, the data passes through a DAC, a digital-to-analog converter.
+
+This, by the way, is not under the control of the program.
+
+Data is scanned, or read, row by row, from left to right.
+
+Also, the Video Display Controller may perform other functions such as image scaling or compositing and noise reduction.
+
+--6-- File 50
+Displays use light emitting technologies that only last for a fraction of a second. The displays must be refreshed regularly.
+
+Horizontal and vertical retraces measure the movement of the electron beams across the display, and the refresh rates are the number of times per second these actions are performed.
+
+An artifact known as flicker is when the viewer notices the color updates on the display. This typically occurs with refresh rates below 72 Hz.
+
+--7-- File 53
+Computer monitors typically have progressive scans, where the entire image on the display is passed for every refresh.
+
+Interlaced scans, typically in television displays, alternate between the even and odd rows of the display for every image refresh. This allowed a higher refresh rate on older technologies by reducing the required bandwidth for every frame.
+
+--8a-- File 55
+The framebuffer stores the color that will be passed to the display. We can employ different color precisions in the framebuffer. 
+
+True color uses 8 bits per red, green, and blue channel, and sometimes alpha, meaning that 3-to-4 bytes are required for each pixel.
+
+HDR monitors, high dynamic range, allow 10 bits per channel and increase the brightness and contrast significantly.
+
+--8b-- File 58
+High color uses 16 bits (or 2 bytes) per pixel, using 5 bits for each RGB channel, or 6 bits for green and 5 for the other two. You don't see many monitors use this low of precision anymore because display technologies have improved and become more accessible. 
+
+--9-- File 60
+The display could also use a lookup table to reduce bandwidth. Depending on the size of the table, we could pass many fewer bits per pixel. For example, only 8 bits are required if we use a table of 256 colors. This is very useful for low-level systems where bandwidth is a problem and image quality is less of a priority.
+
+A palette is a set of colors supported by the display.
+
+--10-- File 62
+True color is what we often use in computer graphics. As already discussed, this is 8 bits per red, green, and blue channels which requires 3 bytes per pixel.  Or 4 bytes per pixel if we add the alpha channel. This is employed in the framebuffers and doesn't necessarily need to match the actual display technology.
+
+OpenGL and other graphics APIs all support true color, representing each channel as a fixed point value between zero and one. This means that instead of 8 bits representing an integer between 0 and 255, they represent the mantissa, or decimal portion of the value.
+
+--11-- File 64
+In addition to the color buffers, architectures support z, or depth, buffers and stencil buffers. APIs typically support 16-, 24-, or 32-bit depth precision, and 8-bits for stencil buffers. This is per-pixel.  Hardware support can be more restrictive, only allowing a sub-set of these precisions.
+
+Z-buffers and stencils, as we have already discussed, are used for depth testing and customizeable testing, and do not get passed to the display.  
+
+The points on this slide are mostly for review.
+
+--12-- File 65
+In our programming assignments, we have been using double buffering, which has been the industry standard for some time, but single buffering is still used, especially for measuring performance.
+
+A single buffer means that the video display controller pulls from the same buffer space as the output of our rendering pipeline. Unless the display refresh is synchronized with our rendering, this leads to a visual artifact called tearing. This is when the controller refreshes the image on the display, but the image has not yet been fully rendered.
+
+--13-- File 67
+Double buffering is a simple solution to the tearing problem by using two separate buffers, one for display, and the other for rendering output, and explicitly declaring the purpose of each. When frame rendering has completed, the buffer purposes are swapped. This swapping is typically performed by updating pointers, but some artchitectures copy the values. Copying buffer values from one buffer to another is an extremely fast operation called blitting, or BLT swapping.
+
+Note that if the swap occurs while the vertical retrace is being performed, tearing can still occur. Some synchronization is usually performed in the architecture to prevent this.
+
+--14-- File 70
+The latest industry standard is to use three buffers instead of two. This functions similarly to double buffering, but always has one buffer in a pending state, cycling through all three buffers.
+
+The synchronization for the vertical sync still occurs, but the application does not need to wait for completion before rendering another frame.
+
+In double buffering, swapping buffers is usually synchronous, but in triple buffering, you simply activate the render target. For this reason, some explicit synchronization is usually required to verify the target buffer is ready for rendering.
+
+--15-- File 71
+Another buffer technique, called stereo vision, stereopsis, or stereoscopic rendering, uses two color buffers for each frame.  Two distinct images are required, one for each eye, and is used in mixed reality systems to imitate depth perception.  Typically, this is displayed on a head-mounted device and each eye has its own screen. The left eye cannot see the right eye's display, and vice versa.
+
+The scene is rendered from each eye position and sent to the device. The two buffers' results must be accessible to the API, so this can be done using framebuffer objects mapped to accessible texture memory. Either two textures are required, or one large texture with one half representing the one eye, and the other half representing the other.
+
+This is no standard for this technique yet, and it is not supported directly by the hardware, but can be easily achieved with already established technologies.
+
+This concludes this video.

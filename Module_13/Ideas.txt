@@ -1,0 +1,14 @@
+
+Rotations:
+Eberly 17
+RTR 4.1-4.3
+Foley 11
+
+
+Points to note for production systems:
+ - camera-local/world coordinates:
+    mitigates floating point error
+
+ - SRT transformations (SQT for quaternions)
+ - Scene graph nodes
+

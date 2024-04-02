@@ -8,10 +8,100 @@ Ericson
     Sections 4.2.1, 4.3.1, 4.4.1
     Chapter 5
 
+https://cp-algorithms.com/geometry/minkowski.html [[Minkowski sum of convex polygons]]
 
---2--
+--2-- File 8
+In this video, we introduce some basics concepts related to collision detection and handling.
 
+--3-- File 9
+Throughout this module, we cover a variety of topics related to collisions. This video just serves as an introduction, discussing multiple principles related to collision tests and collision handling, in general.
 
-ADD Voronoi Regions
-Separating Axis Theorem
-Point-to-X 
+In the remaining videos we will cover specific tests and implementation details.
+
+--4-- File 11
+A plane is a two-dimensional space that divides 3-dimensional space into two halves. We have been using planes in computer graphics since the beginning of the previous course.  
+
+A hyperplane is a generalization of a plane. In n-dimensional space, a hyperplane is defined as an n-minus-1 dimensional shape that divides the n-dimensional space into two half spaces.
+
+For 2-dimensional space, a hyplerplane is a line.  For 1-dimensional space, a hyperplane is a point on the line. This is a useful concept in abstract linear algebra, and I have seen it used in various hashing algorithms.
+
+The point-normal form of a hyperplane can be used in any dimension and quickly and easily determines the half space in which a point is located.
+
+This concept is used frequently in geometric algorithms.
+
+--5-- File 12
+Convexity is a property of polytopes defined as every point on and in the shape can be connected to every other point on and in the shape with straight lines that are also fully contained in the polytope.
+
+Many algorithms involving polytopes can be simplified and optimized if they are convex. For this reason, it is common to only accept convex polytopes or only consider the convex hull of the polytope.
+
+--6a-- File 15
+The most complete test for convexity in any dimension is to verify that the entire polytope lies in the halfspace of each of the polytope's facets.  However, that test does not scale well.
+
+Some tests run quite effieciently, but must account for some edge cases.  Two commonly used tests for polygons are the interior angle test and change of direction test. Both are order of n, where n is the number of vertices.
+
+--6b-- File 16
+The interior angle test checks if all the interior angles are less than or equal to 180 degrees.  However, that criterion alone does not account for self-crossing polygons. Consider the pentagram shape on the right of this slide.
+
+The change of direction test states that a convex polygon will only have two changes of direction along any given axis.  However that test fails to capture the case where all vertices are in a straight line.
+
+A common approach to handle the edge cases of both of these methods is to combine the methods.  Each test covers the edge cases of the other test.
+
+--7-- File 19
+The convex hull is the tightest fitting bounding volume that is typically used. And there are multiple established algorithms for computing one. An internet search will reveal multiple methods, mostly for polygons.
+
+The quickhull method is easy to understand and implement, performs pretty well, and works in 2 and 3 dimensions.
+
+The idea is to create a convex polygon or polyhedron, then iterate over the points and expand it as needed, while maintaining convexity.
+
+--8a-- File 22
+Another useful concept for intersection tests is Voronoi regions.
+
+The principle here is that relative to a polygon or polyhedron, the outside space can be divided into regions which are closest to a vertex, edge, or face.  In other words, all points in that region have as their closest point on the polygon or polyhedron, the corresponding vertex, or lie on the corresponding edge or face.
+
+--8b-- File 23
+You can see in the diagram on this slide that a triangle will have three vertex regions and three edge regions. If a polygon or polyhedron is convex, intersection tests can use Voronoi regions. 
+
+For example, to test if a circle intersects a triangle, you can test if the circle intersects the corresponding vertex or line segment corresponding to the vertex or edge of the voronoi region of the circle's center.
+
+Voronoi regions are not normally computed explicitly, rather used conceptually.
+
+--9-- File 24
+A Minkowski sum adds a set of points to another. It is defined as the set of all points in A, defined as vectors, added to all points in B.
+
+The sum can be computed in a reasonable time, if the point sets are convex.  The link here provides a well-explained algorithm and useful visuals.
+
+--10-- File 26
+The Minkowski sum is useful in collision tests by negating one of the point sets before adding them.  The key property here is that if the point sets intersect, the Minkowski difference contains the origin.
+
+Again, Minkowski sums are not normally computed explicitly, rather used conceptually.
+
+--11-- File 27
+The Separating Axis Theorem also comes up often in collision test methods. The theorem states that if two convex polytopes do not intersect, there exists a hyperplane which separates them. In other words, for the seperating hyperplane, the two polytopes are in opposite half-spaces. 
+
+If you can find a hyperplane that separates them, they do not intersect. The obvious choices for testing are the hyperplanes containing the facets of each polytope.
+
+The separating axis is a line orthogonal to the plane, the plane's normal for example, that when both polytopes are projected onto the line, they do not intersect if there is no overlap on the axis.
+
+--12-- File 28
+Collision handling, often referred to as collision detection consists of three parts, collision detection, collision determination, and collision response. This feature has come to be expected in almost every interactive computer graphics program.
+
+Most of what we will be disucussing involves collision detection tests. The determination part, the exact point and time of collision is also important, but is not quite as much. As humans, we are very forgiving when it comes to points of collision and response, so getting close to a perfect solution is often better than a perfect solution for performance. Of course, in hard simulations, like safety tests of real-world systems, exact solutions are necessary, moreso than real-time response.
+
+--13-- File 29
+If we have sufficient algorithms for collision handling, the problen then shifts to scale. We could test every polygon against every other polygon in the scene every frame, but that is obviously ineffiecient. For example, we would not waste time testing every triangle in a mesh if the bounding volume around the mesh doesn't even collide.
+
+Then, there is the question of stationary and moving objects. Stationary objects don't need to be tested against other stationary objects, just moving objects.  If you have n moving objects and m stationary objects, then the maximum number of collision tests per frame is n*(n-1) + n*m. We could make significant improvements by using bounding volume hierarchies and bi-spatial partitions.
+
+We will be discussing some specific techniques throughout this module.
+
+--14a-- File 30
+The text outlines a set of guidelines for collision handling for performant environments. Besides the obvious need to get your algorithms right, there are multiple suggestions here that are not so obvious. 
+
+Some techniques that I have found useful when developing a good, performant collision handling system I've highlighted on this slide. Unit tests and performance tests are key. One technique that is not at all intuitive to me, is reordering the rejection and acceptances cases of an algorithm; but I have found it to be true. That is where performance tests are critical.
+
+--14b-- File 31
+Also, don't be afraid to reduce the dimensions of tests in your application. I written some 3D applications where the collisions mostly occur on the ground plane. Testing against polygons on the x-y plane are significantly faster than their 3D counterparts.
+
+I recommend going through this list and making sure you understand every point if you plan to implement a collision handling system.
+
+This concludes this video.

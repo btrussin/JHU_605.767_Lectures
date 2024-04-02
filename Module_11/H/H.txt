@@ -1,0 +1,53 @@
+
+23.8
+23.4-23.5
+
+
+--2-- File 105
+In this video, we discuss some memory access and bandwitdh concerns in graphics architecture.
+
+--3a-- File 109
+Graphics memory is used for buffers and textures. When the memory physically resides on a dedicated graphics card, this is called video memory and is not accessible by the CPU except through graphics API calls. This memory is used for buffers such as vertex buffers, framebuffers, and uniform buffers, and for texture data. Texture memory is discussed more on the next slide.
+
+--3b-- File 110
+Another common design is to have memory shared by both the graphics system and the CPU. This is called unified memory, or shared memory, and is typically found in specialized devices such as gaming consoles and embedded devices like cell phones. Even though central memory is shared between the host and graphics system, caches are not shared, rather they are optimized for their target systems, mimicking the optimization that you get from a dedicated graphics card.
+
+You can see a diagram of Intel's Gen9 unified memory architecture on the right.
+
+--4-- File 111
+Textures are special; they are normally static, we need to frequently read large amounts of data from them, plus perform filtering on that data. Memory that holds texture data and the fetching and caching of data are usually given special treatment.
+
+Processing units typically have small, on-chip memory caches for recently-read texture data. This is logical since susequent fragments will most likely need the same data.
+
+These treatments greatly reduce memory reads overall and latency.
+
+
+--5-- File 112
+This is just a short note on ports, buses and bandwidth.
+
+A port is a dedicated 2-way communication for data between two devices.  A bus is more generic in that it can involve more than two device. Most dedicated graphics cards are connected via PCI ports. 
+
+Even though PCI ports boast impressive memory transfer speeds between the CPU and GPU, it is still an order of magnitude greater than using video memory. This is why it is preferable to transfer as much memory as possible during application setup rather than during rendering.
+
+--6-- File 116
+Latency is the time between when memory data is requested and the result is available in the register; when the program can continue its execution.
+
+In a pipelined architecture, latency can hurt performance as it can slow down the entire pipeline. For this reason, great consideration is taken when designing where and when to read data from memory, and how much data to read and cache.
+
+--7a-- File 119
+Bandwith, memory issues, and latency can take a major toll on our applications and graphics architectures consider these factors very carefully. A cache hierarchy can also reduce latency. Also, since sequential memory reads often access data that is located nearby, many architectures store memory in tile tables.
+
+Many architectures also use some type of compression to increase bandwidth.  Note that when compressing data, these compressions algorithms are lossless.
+
+Different data types and usage often dictate the infrastructure allocated for buffer data, pixel data, texture data, etc., as well as the compression used.
+
+--7b-- File 121
+Compression can occur before the data is placed in a cache, this is called pre-cache compression, or after the data is read from the cache but before it goes into the memory hierarchy, this is called post-cache compression.
+
+Pre-cache compression can greatly increase the effective size of the tiles, but increases the complexity of the system.
+
+There are also optimized operations for clearing tile tables.  
+
+We have discussed many different considerations for designing graphics architecture; the next video will review a few examples and hopefully help to solidify these concepts.
+
+This concludes this video.

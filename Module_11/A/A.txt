@@ -1,0 +1,55 @@
+--2-- File 104
+In this module, we will cover optimization techniques, and hardware architecture designs and considerations.
+
+The first four videos will focus on optimization, while the remaining videos will discuss hardware architecture.
+
+This video focuses on the stages of our graphics applications.
+
+--3-- File 105
+After we review the graphics stages, we will cover bottleneck locating techniques in the next video, optimization techiniques in the following, and finally, balancing techniques before getting into the hardware architecture videos.
+
+--4-- File 106
+The application stage is where the application code running on the CPU, sends OpenGL commands and data to control the rendering on the GPU. Tasks like scene graph traversal, updating object positions, loading texture data, collision detection, and many other tasks are performed. Overall the application program controls rendering by sending commands and data to the GPU for further processing.
+
+We cover the geometry and rasterization stages on the next two slides.
+
+--5-- File 107
+The geometry stage is run on the GPU and most of this is under the control of the vertex shader code that is being used. The output includes at least the vertex coordinate in clip space.  Here we also perform some lighting calculations, and pass vertex attributes to the fragment shader so they can undergo the necessary interpolation. We may or may not use the vertex attributes in this phase, but to get them into the rasterization phase, we must explicitly output them.
+
+In addition to the programmable part of the geometry pipeline, the geometry stage also includes tessellation, clipping, back-face culling, perspective division, and viewport transformations. These are all processes occurring in sequence, but you can think of these as substages of the geometry part of the pipeline.
+
+Some systems allow you to program the tessellation stage with what are called geometry or tessellation shaders, but we have not focused on that at all during this course, so I won't go into detail here.
+
+--6-- File 108
+The rasterization stage includes triangle or line rasterization, interpolation of information from the geometry stage into the fragment or pixel processing, it includes texture lookup and filtering, depth buffer tests, and of course includes the fragment shader code.
+
+
+--7-- File 111
+Graphics architectures, or GPUs, were designed to perform these stages very quickly. They use the same efficiency techniques used in regular computer architecture like piplining and parallelism, and are also subject to the same memory/computation tradeoffs.
+
+GPUs generally perform simpler programs than the CPU-based application, but perform parallel and pipelined tasks.  Therefore, for relatively simple operations, they out-perform CPUs. This gave rise to general-purpose GPU programming.
+
+The bottlenecks that we encounter on the GPU are related to the number of operations that need to be performed and accessing memory. These are the same types of bottlenecks found in CPU-based applications, but since GPUs are more specialized, we consider them separately.
+
+--8a-- File 115
+To put these issues into perspective, let's examine exactly how much processing is required to render our graphics applications.
+
+Each fragment will write to a color buffer and depth buffer, and multiple fragments may contribute to each pixel in the framebuffers. Without blending, the fragment will overwrite the values in the framebuffer, or be skipped if the depth test fails.
+
+If we render a scene with blending enabled, which is typical, we have to read the color value in the framebuffer, in addition to the depth value, and if we sample a texture while processing the fragment, that is already 12 bytes that need to be processed, plus the 8 bytes to write to the color and depth buffers making 20 bytes processed per fragment.
+
+--8b-- File 118
+If we consider a depth complexity of 2.5, meaning that each pixel of the framebuffer will have 2.5 contributing fragements, on average, and a display resolution of 1024-by-768, then that requires almost 40 million bytes of memory read or written per frame.
+
+Rendering at 60 frames per second means that the GPU reads and writes 2.4 gigabytes every second. 
+
+--9-- File 121
+Now let's consider the amount of data that must be passed to the GPU every frame. 
+
+It is not uncommon to have hundreds of thousands of triangles, distributed among multiple models, that need to be rendered every frame. Passing this information, or updating this information every frame could lead to serious bottlenecks, and indeed used to be a major concern.
+
+With expanded memory capacity and transfer buses, we can pre-load vertices and their attributes onto the GPU and pass minimal information related to drawing per frame.
+
+You can see how this used to be a major issue, and it still can be if you do not carefully consider all of these factors.
+
+This concludes this video.
