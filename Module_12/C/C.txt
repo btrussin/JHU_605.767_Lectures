@@ -1,0 +1,86 @@
+
+--2-- File 54
+In this video and the next, we introduce physics in graphics applications. These topics are quite extensive and sometimes complicated. These videos just serve as an introduction to some of the basic systems.
+
+--3-- File 56
+I split these topics into two video.  This video introduces the basic concepts and structures, as well as gravity and spring physics.  The next video will focus on rigid body physics.
+
+--4-- File 57
+For context, our physics systems are founded upon Newtons basic laws of motion.
+
+Paraphrasing: 
+An object in motion stays in motion, until a force acts upon it.
+
+And force is relative to mass.
+
+--5a-- File 60
+Particle physics, not to be confused with the particle systems used in computer graphics, analyzes infinitely small particles.  Although not practical in and of itself, the principles that describe particle motion are useful in more complex systems, so we should understand them.
+
+Position is the point at which a particle is located.
+
+Velocity describes the change in position over time.  This is your translation in world coordinates. Velocity is represented as a rate, hence the time factor. The greater the velocity, the greater the change in position per second.
+
+--5b-- File 65
+Acceleration is the change in velocity over time.  A positive acceleration means that the velocity is increasing; the particle is speeding up. And negative acceleration means that the velocity is decreasing; the particle is slowing down.
+
+In calculus terms, these are derivatives, or rates of change.  Velicity is the derivative of position, and acceleration is the derivative of velocity.  Acceleration, therefore, is the second derivative of position.
+
+--6-- File 67
+Momentum is the mass times velocity. And force is the mass times acceleration.
+
+A useful variation is acceleration equals force divided by mass. This shows that force is directly proportional to acceleration and mass.  Increasing acceleration or mass increases force.
+
+An object in motion must update its position every frame. You can do this by adding the velocity for that frame, but a more accurate update includes a small part of the acceleration.
+
+Velocity should also be updated every frame. And acceleration is constant unless a force acts upon the object.
+
+Due to precision errors inherent in floating point numbers, it is possible that motion becomes unstable. To account for this, and to somewhat mimic drag or fraction, a force that is opposite the velocity vector, physics engines add a dampening factor to the velocity.
+
+--7-- File 71
+We sample and update our graphics applications at descrete times. This fails to capture the continuous motion updates of physical reality. 
+
+Fortunately, this problem already has multiple established solutions.  You may remember some of these update functions from Calculus.
+
+Given the current state of the object and time 'i', and change of time 'h', Euler's method updates each value by its rate of change.
+
+This is simple and intuitive, and small enough time intervals are fine. However, our time samples are relatively large, even at 60 times per second, and we will likely see precision errors.  Euler's methods is not very stable.
+
+--8-- File 74
+A better update method, with neglibile cost increases, is the Runge-Kutta method. The second order Runge-Kutta method, called the mid-point method, samples twice during the time interval.
+
+More accurate is to sample four times. You can see the formulas here.
+
+This may look a little like the forward differencing, which we saw while covering curve samples.  They are not the same, but similar principles are applied.
+
+--9a-- File 76
+Now we will briefly discuss two popular and easy forces you can add to your applications.
+
+The first is gravity. In its pure form, gravity is the force that all objects pull on each other.  The force is scaled by the masses of the objects and the distance between them.  The gravitational constant, 'G', was derived from observing the movements of planets and other celestial objects. Outside of massive objects, like planets, this force is so small that it is impractical to account for it, and is often ignored.
+
+--9b-- File 77
+The objects that we interact with are so small compared to the earth that we can ignore the mass of different objects and treat the earth's gravitational pull as constant. 
+
+This is approximately 10 meters per second squared in the direction of the ground surface.  Video games have found this value too high for the experience they wish to create so they often use a reduced gravitational constant. This produces a kind-of bouncy effect.
+
+--10-- File 79
+The second force that is easy to understand and implement is a spring force.
+
+According to Hook's law, the force on two objects connected by a spring is along the vector from one end of the spring to the other, scaled by the length of the spring minus the current distance of the objects, multiplied by a spring constant. You should take a little bit of time to think about how this behaves, and maybe look up a few examples online.  
+
+The spring has a natural resting length. If the spring is compressed, or the objects are closer than the resting length, the force exerts outward on the two ends. If the spring is stretched, or the objects are farther than the resting length, the spring contracts pulling the objects inward.
+
+--11-- File 80
+Real spring forces, induced by an actual coil, have limits. The objects cannot be closer than the compressed length of the spring, and stretching the coil beyond a limit causes the coil to lose its elasticity. We need the material make-up of the coil to account for these, but seldom do we need to that level of detail.  Normally, we mimic a spring force because it's useful, not because we want to model a spring coil. So we model spring-like forces, not actual springs.
+
+--12a-- File 85
+Spring-like forces have been used to model many different objects and behaviors in applications.  I've listed a few here, but there are many others.
+
+One of my favorite uses is to tether a third-person camera to a character. As the character moves around the scene, the camera follows with very smooth motion. The camera can even collide with objects in the scene and make adjustments according to the spring force connecting it to the character.
+
+--12b-- File 86
+Hair and rope can be modeled using an array of spring forces, and cloth can be modeled using a grid of spring forces connecting adjacent cells.
+
+Stiff springs, using Hook's law can even be used to model the connected joints we saw in rigid hierachies.
+
+This concludes this video.
+

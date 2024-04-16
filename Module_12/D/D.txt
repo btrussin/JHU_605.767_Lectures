@@ -1,0 +1,86 @@
+
+--2-- File 88 
+We conclude our discussion on physics covering a very common method called rigid body physics.
+
+--3-- File 89
+We move beyond particle physics, which treats objects as infinitely small particles, and add size, mass, and rotational factors.
+
+We must now account for angular velocity and acceleration, and we need a new calculation, the center of mass.
+
+--4-- File 91
+Determining the center of mass of an object is a notoriously difficult problem. You may be tempted to use the average of the vertices' positions, but you can quickly find cases where that does not apply. The problem does become easier if we assume our objects have a constant density, but is still difficult.
+
+The true center of mass is the weighted average position of all the particles that make up the object.
+
+For our purposes, we can restrict our rigid-bodies to be relatively symmetric solids and model them such that the local origin is the center of mass. Remember that we are aiming for reasonably realistic behavior, not necessarily physical accuracy.
+
+Let's just assume that we have objects whose local origin is their center of mass.
+
+--5-- File 94 [[3]]
+The rotational components that we must add to our rigid bodies are outlined here. Our objects should already have an orientation in world space. This we get from the transformation into world coordinates.
+
+Angular velocity and acceleration are present and can change. For the most part, we can treat these the same as we do for linear velocity and acceleration.
+
+The main divergence from particle physics is with angular force, which is called torque.  The rotational equivalent of mass-time-acceleration equals force, is angular acceleration times moment-of-intertia equals torque. 
+
+Moment of inertia is the angular equivalent for mass, but is not a single value, or even a vecter.  Moment of inertia is a 3-by-3 matrix. It describes the angular response to forces acting upon it along the three principal axes.
+
+--6-- File 96
+The moment of inertia is typically called a tensor. For objects that are relatively symmetric and have a constant density, the tensor has non-zero values only along the diagonal.
+
+For uneven solid objects, the non-diagonal values contribute a negative effect to the rotational motions.
+
+We can assume that the majority of our objects will have inertia tensors with zeros in all positions except the diagonal.
+
+For reference, I will give examples of common objects over the next few slides.
+
+--7-- File 97
+This is the inertia tensor for a rectangular block. Given the mass of the object and the x-y-z dimensions, you can see the values along the diagonal. 
+
+Note that the x, y, and z dimensions do not contribute to the rotational behavior of their respective axes.
+
+--8-- File 98
+The inertia tensor of a sphere is simpler, as you would expect. Note the difference in the tensors given a constant density versus a hollow sphere whose mass is all along the exterior shell.
+
+--9-- File 100
+An ellipsiod of constant density is a kind-of hybrid between the cuboid and sphere.
+
+--10-- File 101
+Cylinders are more complex, and these tensors assume the cylinder is oriented along the z-axis.
+
+Note the hollow cylinder tensor does not account for end caps, just a hollow tube.
+
+--11-- File 102
+And a cone tensor is shown here.
+
+--12a-- File 104
+The main feature of rigid-body physics comes from forces acting on the objects causing changes in velocity and acceleration to our rigid bodies. These forces can come from any number of sources, but collisions from already moving objects is common.
+
+Any force that acts on a rigid body will result in a linear component and an angular component.
+
+--12b-- File 105
+The linear component considers the point of impact of the force, this may be the point of collision with another object, the direction vector of the force, and the projection of the vector onto the vector from the point of impact to the center of mass.
+
+Points of impact far from the center of mass that project little onto the cener have less effect on linear acceleration.
+
+--13-- File 106
+The torque from a force acting on a rigid body also considers the point of impact and force vector, but uses the cross product of the vectors instead of the dot product.  So the farther the point of impact from the center of mass, the greater the effect on rotational acceleration.
+
+As you may have already concluded, all this requires a robust collision handling system.
+
+--14-- File 107
+Despite all the additional mathematics and physical properties that we need to process, a basic physics system is not too complicated.
+
+Each physics-enabled object can register the forces acting upon it, and make the appropriate updates each frame.
+
+Collision detection and handling would also need to account for the mass and acceleration of the objects colliding. A special case can be made for immovable objects, giving them infinite mass.
+
+--15a-- File 111
+Again, we only scratched the surface of this topic, but hopefully established enough foundation that will accelerate any further studies (pun intended).
+
+More nuanced physics topics are listed here. There are ways to mimic some of the these using what we have already presented, but they are gross oversimplifications, not physically accurate.
+
+--15b-- File 112
+A commercial physics engine will most likely not account for friction, heat tranfer or fluid dynamics.  Deformable bodies is probably the most common topic on this list. And physically-accurate simulations that deal with these are most likely not real-time interactive.
+
+This concludes this video.

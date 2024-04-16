@@ -12,3 +12,17 @@ Points to note for production systems:
  - SRT transformations (SQT for quaternions)
  - Scene graph nodes
 
+
+
+
+
+
+TODO:
+AR/VR (668 - 12)
+Modern Graphics APIs (667 - 13?)
+Geometry Shaders (none)
+Video Game Components? (668 - 1)
+	How our code differs from the industry
+Quaternion Mathematics (none)
+Terrain Gen? (none)
+

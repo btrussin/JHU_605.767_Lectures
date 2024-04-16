@@ -1,0 +1,158 @@
+
+https://www.amazon.com/Math-Primer-Graphics-Game-Development/dp/1568817231/ [[3D Math Primer for Graphics and Game Development]]
+
+
+--2--
+Here, I present the practical representations and algorithms involving quaternion mathematics, and attempt to take some of the mystery out of this incredibly confusing mathematics system.
+
+--3--
+After defining the values, operations, and properties of rotational quaternions, we will cover the extremely valuable SLERP function.
+
+Finally, I will explain the theory of quaternion mathematics, for those who are interested.
+
+--4--
+This is the proper way to define a quaternion, as it represents a rotation.
+
+A quaternion is defined as a four-dimensional vector. The 'w' component relates to the rotation, and the x, y, z values relate to the 3-dimensional vector around which the rotation occurs.  This vector is unit length.
+
+x, y, and z are this unit vector scaled by the sine of half the rotation angle, and w is the cosine of half the rotation angle.
+
+Why do we use half the rotation angle?  That I won't explain until the very end of this video.  There is much that we need to explain before this makes sense.  In the meantime, just trust that this works.
+
+--5--
+I have tried to understand this branch of mathematics many times, but it wasn't until I read the description in the book by Dunn and Parberry called "3D Math Primer for Graphics and Game Development".  Chapter 8 on rotations is the best that I have seen.
+
+Most texts describe quaternions as a combination of 3 perpendicular imaginary dimensions, and a real dimension (the 'w' component).  This is a terrible way to describe what's going, in my opinion.  It is true that there are similarities to the complex number system, which I will describe later, but the complex number system just happens to have some properties that we need and use.  It does not mean that the 3D rotation vector exists in imaginary space.
+
+Before I explain the theory and why it works, I will present the practical properties and algorithms.  You can skip the last part of the video if you don't care to know the theory.
+
+--6--
+The identity quaternion is a '1' as the 'w' component, and the zero vector.  This represents no rotation, and it gives us the properties that we expect, that any quaternion multiplied by the identity is equal to itself.
+
+A negative 1 as the 'w' component is similar to the identity, as a multiplication by it does not change the quaternion rotation.  However, it does flip the angle and vector, which is not what we expect with an identity value, so it is not considered valid.
+
+--7--
+A quaternion can be negated by negating each component. However, negating the angle and rotation vector results in the same rotation as the original.  So, this is valid, but not useful.
+
+--8--
+The magnitude of a quaternion is computed the same way as any n-dimensional vector.
+
+For quaternions that represent rotations, the magnitude will always be 1.
+
+--9--
+The conjugate of a quaternion is an important concept. This produces the opposite behavior of the original quaternion. 
+
+The inverse is related to the conjugate having the additional constraint that it is normalized.
+
+Since we are strictly dealing with rotation quaternions which are all unit length, the conjugate is the same as the inverse for our purposes.
+
+A quaternion inverse behaves the same as matrix inverse.
+
+--10--
+This is the formula for multiplying two rotation quaternions.  I have not yet presented the tools to derive this, so you will just have to trust that this works as expected.
+
+This will be explained during the theory portion of the video.
+
+--11--
+Scalar multiplication and dot products function the same as vectors 2 and 3 dimensions.  Even the dot product of two quaternions equals the cosine of the smallest angle between them, scaled by the lengths, just like in 2 and 3 dimensions.
+
+--12--
+The arithmetic properties of quaternions are the same as matrices.
+
+Quaternions are associative, but not commutative.
+
+The magnitude of the quaternion product equals the product of the individual magnitudes.
+
+And multiplication by the inverse in reverse order equals the original multiplication chain.
+
+In almost all cases, we can treat quaternions the same as we do matrices.
+
+--13--
+A quaternion difference represents the rotation from one quaternion to another. This is based on Euler's Rotation Theorem.  
+
+Basically, using quaternions, it is trivial to find the axis and angle to find the rotational transformation for one angular displacement to another.
+
+See the formulas on this slide.  To go from A to B, by way of D, D equals B right-multiplied by the inverse of A.
+
+--14--
+This is where quaternions diverge from the matrix transformations we have been doing throughout these courses.
+
+A point or vector in quaternion space is defined with the w-component equals zero, and the x, y, and z values as the coordinates.
+
+With the quaternion representation that we presented earlier, using the sine and cosine of half the angle of rotation, simply multiplying the quaternion point by the quaternion rotation does not give us the result that we would expect.  To get the correct result, we right-multiply the point by the inverse of the rotation quaternion, then left-multiple by the rotation quaternion.  This strange property is a result of the limitations of representing 3 orthogonal rotation planes as only 4 dimensions, collapsing the second dimension of each plane into one.
+
+I will explain this later. For now, you can just trust that this works.
+
+Note that in practice, we do not project 3D points or vectors into quaternion space to perform the rotation. Instead, we convert the quaternion to a matrix and then perform the calculation.
+
+The reasons for this are that conversions to and from quaternion space are non-trivial and they have about the same number of calculations as the matrix conversion followed by the vector multiplication.  So it is impractical.
+
+--15--
+I tried to skip this slide, because the log and exponentional functions are not useful for quaternion rotations by themselves.  However, they are necessary if you want to understand the interpolation function that we describe on the next few slides, so I had to include it.
+
+Feel free to skip this slide if you like, but there is a really important obeservation presented on the next slide that cannot be fully understood without understanding the log and exponential properties of rotational quaternions.
+
+--16--
+Spherical linear interpolation, abbreviated SLERP, is a powerful interpolation of two quaternion rotations. It is quick and reliable.
+
+The key property in this method is that a quaternion rotation raised to the power of 'n', is 'n' times the rotation around the same axis.  A quaternion 'q', raised to the power of 2 is twice the rotation of 'q'.  And 'q' raised to the 1/2, is one half the rotation of 'q'.
+
+--17--
+Given two distinct quaternion rotations, source and destination rotations, we can interpolate between them by first computing the difference, as described on a previous slide; then left-multiplying a scaled distance by the source.
+
+--18--
+We can even utilize the dot product of the two vectors to compute the cosine of the smallest angle between them, and save on some computations.  
+
+Remember that we store quaternions values scaled by sines and cosines of half the rotation angle, so we need to extract the original angle somehow.  This is easy enough to do, and once we do, we can use sine and cosine properties to interpolate the t-value spherically and add the scaled rotations by the values shown on this slide.
+
+I won't cover the method used to define this, but you should be able to derive these values on your own, or just revert to the formulas shown of the slides.
+
+That concludes the practical portion of quaternions. For the remainder of the video, I will attempt to explain why this strange 4-dimensional system works. If you have no interest in the theoretical part, you can skip the rest of the video.
+
+--19--
+Let's establish a few rules.
+
+First, a one-dimensional scalar value 'a' can be represented in n-dimensional space by an n-by-n matrix whose diagonals are all the scalar value 'a', and the remaining values are zero.
+
+This holds true for all the basic arithmetic operations addition, subtraction, and multiplication.  Division is a slightly different in multi-dimensional space, replaced by the inverse and matrix multiplication rules that we have already established.
+
+--20--
+What's really interesting is that we can represent complex numbers easily in 2-dimensional space.  We just need a system where the same one-dimensional rules hold true.
+
+Given a complex number with real part 'a', and imaginary part 'b', the 2-by-2 matrix a, negative b, b, a, (going left to right and top to bottom), sufficiently models complex numbers in 2 dimensional space.
+
+This is a powerful observation.  If you are skeptical that this is true, you should work out a few examples using addition, subtraction and multiplication, and satisfy yourself that this is indeed true.
+
+--21--
+What I think is even more interesting is that spherical rotation about the origin can be modeled using this same convention, in 2-D space, using cosine-theta plus i times sine-theta.  
+
+2-dimensional imaginary space is often modeled using a circle about the origin.  I don't necessary think that they are the same, or even related, but the fact remains that they follow the same rules. So it's convenient to use complex number rules while analyzing rotations.  They have a one-to-one mapping.  
+
+One useful similarity is the multiplication by 'i', the imaginary number, is equivalent to performing a 90-degree rotation.  And multiplication by negative-i is equivalent to performing a minus-90-degree rotation.
+
+--22--
+The relation that 2-D imaginary space has with 2D rotations caused William Hamilton to look for a 3D relationship.  The story goes that he could not find one, and I think it has been since proven that there cannot be a direct 3D equivalent, but he did discover that there is a direct mapping in 4-dimensional space.
+
+Listed here are the rules that must hold true. i, j, and k must represent orthogonal rotational axes, and must conform to the same imaginary number rules. Futhermore, i times j must map to k, j-k to i, and k-i to j.
+
+It turns out that the matrices listed at the bottom of this slide, satisfy all the necessary conditions. I have read that these are not the only matrices that satisfy these conditions, but they are the ones that are commonly used.
+
+Again, if you are skeptical, you should work out a few examples using addition, subtraction and multiplication and convince yourself these hold true.
+
+--23--
+This is how we get the odd-looking 4-by-4 matrix representation of a quaternion. We don't need to support this is our code, but mathematically, it is necessary to derive the simpler formualas we do need to support.
+
+If you multiply one quaternion matrix by another, all values cancel out except for those on the diagonal, which we can represent as a single vector. This is how we get the strange quaternion multiplication from earlier in this video.
+
+--24--
+We finish this lecture resolving the strange convention of multiplying a point or vector by a rotation quaternion.
+
+The rules that we have laid out the last few slides satisfy the necessary operation constraints to convince us that they are valid.  Quaternions can be added, multiplied, interpolated, and so forth, for any point in quaternion space.
+
+However, multiplying quaterion vectors by quaternion rotations does not behave as we would expect.
+
+If we left multiply the point by a rotational quaternion, we get the correct rotation around the correct axes. Success, except that we get additional rotation around axes that we don't want. If we right multiply the vector by the inverse of the rotational quaternion, again, we get the correct rotation around the correct axes.  However, we again get additional rotation around axes that we don't want.  But here is a clue, the additional unwanted rotations are opposite each other.  So if we right multiply by the inverse, and left multiply by the original, the unwanted rotations cancel out.  However, there is one more artifact to resolve: now we have twice the correct rotation.  This is easily solved by storing our rotational quaternions using only half the desired angle rotation.
+
+That concludes our discussion on quaternions. Hopefully, you have gained a little bit of understanding and appreciation for this obscure but useful branch of mathematics.
+
+This concludes this video.

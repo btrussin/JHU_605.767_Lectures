@@ -1,0 +1,93 @@
+https://www.spriters-resource.com/nes/ [[NES Mario Sprites]]
+https://www.gameenginebook.com [[Pose images]]
+https://www.animatorisland.com/the-t-pose-all-about-the-mighty-blueprint/ [[The T Pose]]
+
+
+--2-- File 0
+In this video, we introduce a number of animation terms and techniques.
+
+--3-- File 1
+Animation is a very extensive topic. In this module, we will establish some of the basics from the relatively primitive cel animation to more advanced topics like skinned animation and inverse kinematics. You can see here the topics that we cover.
+
+Multiple courses can focus solely on animation, both from technological and artistic approaches. In fact, there are courses that just focus on a single software package and how it creates and executes animation. 
+
+We will only scratch the surface of these topics, but establish enough of a foundation that you should be able to learn much more on your own. You already have an advantage over others with your knowledge of computer graphics, which are tightly coupled with the animation technologies.
+
+--4-- File 3
+The major core types of animation are listed here. The remainder of this video discusses these.  The next video goes into animation sequences.
+
+--5-- File 5
+Cel animation gets its name from cartoon cels, which are transparent plastic sheets that overlay a background.  These are used in cartoon, or hand-drawn animations that take still shots and replay them in rapid sequence. Instead of recreating the entire image for every shot, a background can be re-used with sheets overlaid that capture the foreground objects and characters.
+
+The computer graphics equivalent of this technique is called sprites. Sprites are texture-mapped quads rendered in either 2D or 3D that may be animated.  The textures can be updated, or most likely the texture coordinates of the quad, to produce the same effect as cel animation. As single animation frames rapidly update, the objects can appear to move.
+
+This technique is often used today to mimic pixel graphics from early video games, but high-resolution images are prevalent in sprites as well.
+
+Properly created and timed image sequences called animation clips, give our objects and characters life-like movement at a very low cost. We discuss animation clips more in the next video.
+
+--6-- File 7
+Rigid heirarchical animation is a technique that functions similarly to the transformation heirarchies we use in our scene graphs.  A 2D or 3D model is created as a hierarchy of smaller parts, each part as a transformation offset from its parent. The model has a root part with no parent, but everything else is connected.
+
+Consider a machine arm with two parts, and two points of articulation, one at its base and the other at the elbow. 
+Even if the part connected at the elbow does not update, if the base of the arm rotates, so does the child. The transformation hierarchy that we have been using these past two semesters captures these movements and can be used in this type of animation.
+
+The major disadvantage to this technique is that parts are disjoint, and as they move, visible cracks appear between them. So this technique is fine for some objects, but fleshy objects look unnatural.
+
+--7-- File 10
+To solve this issue, you can control the position of every vertex in the model.  This gives the most control, but becomes unreasonable for complex mesh objects.
+
+However, giving the artists and animators complete control over the vertex positions has its place in finely detailed animations such as facial expressions.
+
+A variation of per-vertex control uses what are called morph targets. These are discrete positions of the vertices captured at a point in time, similar to key poses that we will discuss shortly. Intermediate positions of the vertices, those sampled in time in between those key poses, are calculated using a weighted average of the key poses' vertex positions.
+
+--8a-- File 12
+The most prevalant animation technique in use today is a hybrid of the rigid hierarcy and per-vertex techniques called skinned animation, or just skinning.
+
+Skinned animation uses a mesh object, but adds a structure called a skeleton, or rig, that controls the movement of the mesh.  The skeleton is almost identical to a rigid hierarcy, with the main difference being that it is never rendered.  Each vertex in the mesh is assigned parts of the skeleton that will influence its position. The vertex's position then becomes the weighted average of its associated skeleton parts.  This whole process can get tedious and is usually performed using some external modeling software.
+
+--8b-- File 14
+Once the entire structure is created, the animation creators and renderers only need to concern themselves with the underlying skeleton poses. This gives every process the ease and flexibility of a rigid hierarchy, but maintains the fine detail of the per-vertex technique.
+
+Furthermore, there exists graphics API and hardware support for skinned animation; and this technique works very well with other high-level animation technologies like motion capture.
+
+--9-- File 16
+A skeleton rig is typically created using modeling software. The individual parts are called joints.  Sometimes you may see the term bone, but it is often used incorrectly from a technology perspective. A "bone" is the empty space between two joints and only exists in concept.  However, it is tempting to use this term as it is easier to understand the concept of bones than transformation hierarchies.
+
+The joints function similarly to the transformation nodes we use in our scene graphs.  Each joint has one parent, unless it's the root, and has your typical scale, rotation, and translation components.
+
+The root joint is used to position and orient the entire model in world coordinates, and can be anywhere in the skeleton. For reference, the standard layout of a humanoid skeleton positions the root joint at the center of the hips.
+
+--10a-- File 18
+A typical joint structure contains a name, which can be of any type, but is often a string or hashed id, contains transformation data, and is usually placed in an array, contiguous in memory. The reference to the parent joint is then either on index in the array, or the name of the parent, or a pointer to the parent.
+
+Skeleton information can be quite large, especially when you start using it for animation data, so great care is taken when deciding the structure and data types. Scale data can be constrained to be uniform in every dimension and represented as a single value, and rotation data is usually stored using quaternions. The choice to represent rotations using quaternions has a practical justification in addition to the memory savings.  I have never seen joint transformation data stored in a matrix.
+
+--10b-- File 19
+As a side note, our scene graph transformation nodes should not store the data as a matrix either, but it is probably the best option for an educational setting.
+
+Note that often joint transformation data is captured as the inverse transformation, or the transformation needed to get back to its parent joint. This is useful for solving some high-level problems like inverse kinematics, which we will briefly discuss in the next video.
+
+--11-- File 20
+Here is some psuedocode for Joint and Skeleton structs that I took from Jason Gregory's Game Engine Architecture book, which is an excellent resource on these topics.
+
+--12-- File 24
+A pose is a capture of the joint information at a point in time. A common pose used for humanoid character meshes is called a bind pose, but also referred to as a reference, rest, or 'T' pose.  I believe the term 'bind' pose comes from the general opinion that it is easiest to bind, or associate vertices of the mesh to the underlying joints of the skeleton while it is in this position.
+
+--13-- File 26
+Any pose can be captured and stored in memory or on the filesystem for later access. This raises the question of what transform data to store. You can store each joint's transformation data as its absolute transformation in world or local space, essentially pre-multiplying the parent data with its own, or you can just store the relative transformation data. Either way, consistency is needed and you should pay attention to the output of the model and pose data to ensure your processes are aligned.
+
+--14-- File 29
+When we render a skinned model, additional information is needed.  First we need to know the number of joints each vertex is associated with. This is typically capped at four joints. This has a practical implication; the joints' indices can be packed into 32 bits, assuming the model has less than 256 joints.  A weight per joint is also needed.
+
+The remaining vertex attributes are unchanged.
+
+--15-- File 31
+In order to access the joint information to determine the position of each vertex, the joint transformations can be converted to matrices and passed to a uniform buffer as an array of matrices. This is referred to as a matrix palette.
+
+The appropriate joint matrices are fetched in the vertex shader and the world coordinates of the vertex are weighted averages of the associated joint transformations.
+
+This concludes this video.
+
+
+
+

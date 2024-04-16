@@ -1,0 +1,97 @@
+
+--2-- File 32
+This lecture builds upon the principles established in the last lecture and puts it all together in animation sequences.
+
+--3-- File 34 [[0]]
+An animation clip is a set of poses, or static states associated with time.  These can be static images, like what is stored in a video file, or as metadata for models and other objects used to produce an animation sequence.
+
+Capturing data for every frame is not only memory intensive, but impractical.  Often, an animation clip is stored as a series of key poses which can then be mapped to other timelines, which we discuss shortly, and the data interpolated to match any sampling or frame rate that we require.
+
+--4-- File 38
+An animation clip can be played, or reproduced, any number of times. A clip that restarts and replays continuously is called a loop and often gets special treatment; such as the start and end poses being aligned to give the illusion of one continuous animation.
+
+Clips in video games are very common, and usually, but not necessarily fall into one of three categories.
+
+A Non-Interactive Sequence refers to any motion that a character or object performs on its own, or is triggered by, but not controlled by the player.
+
+An In-Game Cinematic, also called a cut-scene, removes control from the player and executes a series of pre-programmed animations.
+
+A Full Motion Video is a pre-rendered animation that is loaded from a video file.
+
+These are not universal terms, but the concepts are pretty much everywhere.
+
+--5-- File 40 [[1]]
+Animation clips have their own timeline, which rarely lines up with the global timeline, or any other timeline in our applications.  For this reason, animations are stored with their own time, usually scaled to start at 0 and end at 1.
+
+This convention is convenient for scaling and synchronizing animations.
+
+I mentioned key frames or poses that make up animation clips. These are interpolated during playback to produce any intermediate pose that is needed. 
+
+It is essential to use a high resolution clock and floating point values to gain the highest level of control over animation reproduction.
+
+--6-- File 41
+Reproducing an animation clip requires some synchronization.  In the very least, we must decide when, during the global timeline, to begin the clip.
+
+Often, we must reconcile multiple animations and have them align at appropriate times.  Let's consider a simple example.
+
+A character in a video game opens a car door.  Two animations, independent of each other, must be synchronized.  The first animation involves the character extending a hand, grabbing the door handle, and pulling the hand back.  The second animation simply opens the car door. 
+
+Multiple factors should be considered. 
+
+First, the second animation should begin as the character's hand begins to retract. Next, the car door animation should end when the character's hand is fully retracted.  Finally, the car door and hand retraction should move at the same pace. 
+
+Both animations should be defined with this scenario in mind, and supply the appropriate key poses and times so that they may be properly synchronized.  A parent process would then perform the synchronization at runtime.
+
+--7-- File 43
+Often, it is necessary to blend two or more poses to produce a final pose. The obvious case is that of interpolating key poses for intermediate samples.  However, blending two or more animations is also often necessary.
+
+This occurs for many reasons.  One such situation is when a game character is in the middle of an animation, but a player presses a button that triggers another animation to begin immediately. Abruptly stopping one animation to begin another would be very jarring to the viewer.  Blending the two animations for a smooth transition is a much better option.
+
+--8-- File 44
+It is a significant challenge to blend two transformation matrices to produce a correct transformation.  It is significantly easier, and produces a better result, to blend the transformation components seperately and independently.  Scale and translation components can be interpolated linearly. Rotation requires more care and is not always straight-forward. Quaternions are often best to perform a smooth interpolation.
+
+On a higher level, blending two animations can be done multiple ways.  Freeze blending interpolates the end pose of one animation and gradually adds the next animation. A linear transition of this technique is usually acceptable, visibly.
+
+--9-- File 45
+The overlap method blends portions of each animation simultaneously.  This case may require a smooth-step animation.
+
+One blending technique is not necessarily better than another, as well as the interpolation technique. You should experiment with different combinations in different scenarios to determine the most-desired effect.
+
+--10-- File 47
+A non-intuitive technique that produces surprisingly realistic results is one called additive blending, using what are called difference clips.
+
+A difference clip is obtained by computing the difference in the SRT values of one animation clip from the SRT values of another similar animation clip. This produces the difference, or transformation, between the two clips.
+
+Consider the example of two similar animations, one where a character is walking, the other where the same character is also walking, but in a slouched, tired manner. The difference from the first clip to the second defines the slouched, tired variation of the walk. After obtaining this tired clip, it can then be added to the regular walking clip to reproduce the tired walk animation.  This may not sound like a significant savings, but then the same tired variation difference clip can be added to other movement clips producing a similar tired variation. This works in many more cases than you may expect.
+
+Animation information takes up a lot of storage and memory space, so a technique like this can provide many benefits.
+
+Beware that this technique does not always work. Some additions can produce unnatural movements.
+
+--11-- File 48 [[2]]
+Some animations cannot be entirely defined offline. Some decisions must be made while the application is running.
+
+Some applications allow the user to interact with character models by way of user-driven events. Some of the poses and short animations can be precomputed, but fine controls cannot be fully anticipated.
+
+Inverse kinematics is another technique that involves some runtime procedures. This is a reverse pose. Let's say a charactor model must place her hand on a table, but the exact position and orientation is not known until runtime. 
+
+Inverse kinematics attempts to solve the transformations of the joints such that the hand ends up in the target position.  As long as the character model is within some threshold, a solution can be found. This algorithm is somewhat involved so I won't cover it here.
+
+--12-- File 49
+The rag doll effect is another procedural technique that involves some collisiion handling but has, for the most part, forward resolution. The name comes from a rag doll that is limp at all of its joints.  The limbs of the doll fall freely and stop as they reach the extents of the joints or collide with exterior surfaces.
+
+This is a common technique that relies on basic rigid body physics which is discussed later in this module.
+
+--13a-- File 50
+The last animation topic that I briefly want to cover is constraints, a necessary element of multiple techniques.
+
+When defining and animating a skeleton for a mesh, many of the joints should be restricted in their articulation.  Knees only bend one way, same with elbows, so those joints should not be permitted to move beyond natural limits.  This information may need to propagate to the application if doing some procedural animating.
+
+Inverse kinematics, by nature, requires constraints, but should also consider those skeleton constraints.
+
+--13b-- File 53
+Across models and animation clips, when performing some synchronization, constraints may also be necessary. For example, if two characters are in a conversation, most likely they will be facing each other. Or, if a model of a person is holding and moving an object with a hand, that object should move as the hand moves.
+
+One technique that is used is a joint that can tether two otherwise disconnected models, or a spring force that will be covered in the physics lectures. Regardless of how you resolve these situations, it is relatively easy to do if you design for it.  I just want you to be aware of those issues.
+
+This concludes this video.
